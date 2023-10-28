@@ -28,6 +28,9 @@ class ModeSelect:
     def update(self):
         pass
 
+    def text(self, param, param1, param2, param3):
+        pass    # 아직 미완성.
+
 
 class GameBackground:
     def __init__(self):
