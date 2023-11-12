@@ -1,6 +1,8 @@
 from pico2d import load_image
 import random
 
+from skier import Skier
+
 
 class Flag:
     def __init__(self):
@@ -9,12 +11,14 @@ class Flag:
         self.frame_height = 50
         self.frame_x = random.randint(0, 10) * self.frame_width
         self.frame_y = self.frame_height
+        self.x = random.randint(50, 950)
+        self.y = random.randint(30, 1400)
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        pass
+        self.y -= Skier.speed
 
 
 class Tree:
@@ -24,12 +28,14 @@ class Tree:
         self.frame_height = 240
         self.frame_x = random.randint(0, 4) * self.frame_width
         self.frame_y = random.randint(0, 2) * self.frame_height
+        self.x = random.randint(50, 950)
+        self.y = random.randint(30, 1400)
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        pass
+        self.y -= Skier.speed
 
 
 class Rock:
@@ -39,9 +45,11 @@ class Rock:
         self.frame_height = 344
         self.frame_x = random.randint(0, 4) * self.frame_width
         self.frame_y = self.frame_height
+        self.x = random.randint(50, 950)
+        self.y = random.randint(30, 1400)
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        pass
+        self.y -= Skier.speed

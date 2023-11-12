@@ -14,9 +14,7 @@ while True:
     clear_canvas()
 
     game_background.draw()
-    # rock.draw()
-    # tree.draw()
-    # flag.draw()
+
 
     update_canvas()
     delay(0.01)
