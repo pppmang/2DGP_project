@@ -10,6 +10,8 @@ class GameBackground:
     def __init__(self):
         self.image = load_image('game_background.png')
         self.obstacles = []
+        self.y = 0
+        self.skier = Skier()
 
     def draw(self):
         self.image.draw(500, 750)
@@ -17,7 +19,7 @@ class GameBackground:
             obstacle.draw()
 
     def update(self):
-        self.y -= Skier.speed
+        self.y -= self.skier.speed
         if self.y < -1500:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
             self.y = 0
 

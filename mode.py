@@ -78,31 +78,36 @@ def init():
 class NormalMode:
     def __init__(self):
         self.background = GameBackground()
+        self.skier = Skier()    # Skier 객체 생성
 
     def draw(self):
         self.background.draw()
+        self.skier.draw()  # Skier 그리기
 
     def update(self):
-        pass
+        self.background.update()
+        self.skier.update()  # Skier 업데이트
 
     def handle_event(self, event):
-        pass
-
+        self.skier.handle_event(event)  # Skier 이벤트 처리
 
 class InfinityMode:
     def __init__(self):
         self.background = GameBackground()
         self.life_image = load_image('life.png')
         self.life_count = 3     # 초기 플레이어 생명 개수
+        self.skier = Skier()    # Skier 객체 생성
 
     def draw(self):
         self.background.draw()
 
         for i in range(self.life_count):
             self.life_image.draw(50 + i * 80, 1450)
+        self.skier.draw()  # Skier 그리기
 
     def update(self):
-        pass
+        self.background.update()
+        self.skier.update()  # Skier 업데이트
 
     def handle_event(self, event):
-        pass
+        self.skier.handle_event(event)  # Skier 이벤트 처리

@@ -10,15 +10,16 @@ class Flag:
         self.frame_width = 35
         self.frame_height = 50
         self.frame_x = random.randint(0, 10) * self.frame_width
-        self.frame_y = self.frame_height
+        self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1400)
+        self.y = random.randint(30, 1450)
+        self.skier = Skier()
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        self.y -= Skier.speed
+        self.y += self.skier.speed
 
 
 class Tree:
@@ -26,16 +27,17 @@ class Tree:
         self.image = load_image('tree.png')
         self.frame_width = 200
         self.frame_height = 240
-        self.frame_x = random.randint(0, 4) * self.frame_width
+        self.frame_x = random.randint(0, 3) * self.frame_width
         self.frame_y = random.randint(0, 2) * self.frame_height
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1400)
+        self.y = random.randint(30, 1450)
+        self.skier = Skier()
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        self.y -= Skier.speed
+        self.y += self.skier.speed
 
 
 class Rock:
@@ -44,12 +46,13 @@ class Rock:
         self.frame_width = 345
         self.frame_height = 344
         self.frame_x = random.randint(0, 4) * self.frame_width
-        self.frame_y = self.frame_height
+        self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1400)
+        self.y = random.randint(30, 1450)
+        self.skier = Skier()
 
     def draw(self):
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
 
     def update(self):
-        self.y -= Skier.speed
+        self.y += self.skier.speed

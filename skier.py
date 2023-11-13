@@ -34,22 +34,26 @@ class StateMachine:
 
 class Skier:
     def __init__(self):
-        self.x, self.y = 400, 600
+        self.x, self.y = 500, 1300
         self.frame = 0
         self.action = 9
         self.dir = 0    # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
         self.image = load_image('skier.png')
-        self.state_machine = StateMachine(self)
-        self.state_machine.start()
+        self.speed = 2
+        # self.state_machine = StateMachine(self)
+        # self.state_machine.start()
 
     def update(self):
-        self.state_machine.update()
+        pass
+        # self.state_machine.update()
+        # self.x += self.dir * 5      # skier 이동 속도 (일단 고정)
 
     def handle_event(self, event):
-        self.state_machine.handle_event(('INPUT', event))
+        # self.state_machine.handle_event(('INPUT', event))
+        pass
 
     def draw(self):
-        self.state_machine.draw()
+        # self.state_machine.draw()
         draw_rectangle(*self.get_bb())
         pass
 
