@@ -21,8 +21,8 @@ class ModeSelect:
     image = None
 
     def __init__(self, x = 400, y = 300): # 생성좌표 (400, 300), 속도는 1
-        if ModeSelect.image == None:
-            ModeSelect.image = load_image('mode_select_UI.png')
+        if self.image == None:
+            self.image = load_image('mode_select_UI.png')
         self.x, self.y = x, y
 
     def draw(self):
