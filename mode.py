@@ -53,9 +53,9 @@ class ModeSelect:
 
                     # 모드 선택 후 해당 모드로 화면 전환
                     if self.selected_mode == 'NORMAL':
-                        print('Normal')
+                        return NormalMode()
                     elif self.selected_mode == 'INFINITY':
-                        print('Infinity')
+                        return InfinityMode()
 
 
 def handle_events():
@@ -85,13 +85,24 @@ class NormalMode:
     def update(self):
         pass
 
+    def handle_event(self, event):
+        pass
+
 
 class InfinityMode:
     def __init__(self):
         self.background = GameBackground()
+        self.life_image = load_image('life.png')
+        self.life_count = 3     # 초기 플레이어 생명 개수
 
     def draw(self):
         self.background.draw()
 
+        for i in range(self.life_count):
+            self.life_image.draw(50 + i * 80, 1450)
+
     def update(self):
+        pass
+
+    def handle_event(self, event):
         pass
