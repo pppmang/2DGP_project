@@ -15,7 +15,6 @@ while True:
 
     game_background.draw()
 
-
     update_canvas()
     delay(0.01)
 
