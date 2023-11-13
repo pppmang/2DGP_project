@@ -1,13 +1,61 @@
 from pico2d import *
 
-from background import GameBackground, StartMenu, ModeSelect
+from background import GameBackground
 import game_framework
 import game_world
 
 from skier import Skier
 
-# 모드 선택 변수
-selected_mode = None
+
+class StartMenu:
+    def __init__(self):
+        self.image = load_image('start_menu_background.png')
+
+    def draw(self):
+        self.image.draw(750, 420)
+
+    def update(self):
+        pass
+
+
+class ModeSelect:
+    image = None
+
+    def __init__(self, x = 200, y = 100):
+        if self.image is None:
+            self.image = load_image('mode_select_UI.png')
+        self.x, self.y = x, y
+        self.font = load_font('GOTHICB.TTF', 55)
+
+        self.mode_buttons = [
+            {'mode': 'NORMAL', 'x': self.x - 125, 'y': self.y + 5},
+            {'mode': 'INFINITY', 'x': self.x + 200, 'y': self.y + 5}
+        ]
+        self.selected_mode = None
+
+    def draw(self):
+        self.image.draw(self.x, self.y)
+        self.image.draw(self.x + 310, self.y)
+
+        for button in self.mode_buttons:
+            self.font.draw(button['x'], button['y'], button['mode'], (255, 255, 255))
+
+    def update(self):
+        pass
+
+    def handle_event(self, event):
+        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            for button in self.mode_buttons:
+                x, y = button['x'], button['y']
+
+                if x - 30 < event.x < x + 250 and y + 570 < event.y < y + 690:
+                    self.selected_mode = button['mode']
+
+                    # 모드 선택 후 해당 모드로 화면 전환
+                    if self.selected_mode == 'NORMAL':
+                        print('Normal')
+                    elif self.selected_mode == 'INFINITY':
+                        print('Infinity')
 
 
 def handle_events():
@@ -25,23 +73,6 @@ def init():
     global startmenu
     global gamebackground
     global skier
-
-
-
-def mode_selection():
-    global selected_mode
-    global normal_modeselect
-    global infinity_modeselect
-
-    selected_mode = None
-
-    while selected_mode is None:
-        clear_canvas()
-        StartMenu()
-        normal_modeselect = ModeSelect(200, 300)
-        normal_modeselect.text(200, 300, "Normal", (0, 0, 0))
-        infinity_modeselect = ModeSelect(400,300)
-        infinity_modeselect.text(400, 300, "Infinity", (0, 0, 0))
 
 
 class NormalMode:

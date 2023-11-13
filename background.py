@@ -6,35 +6,6 @@ from obstacle import Rock, Tree, Flag
 from skier import Skier
 
 
-class StartMenu:
-    def __init__(self):
-        self.image = load_image('start_menu_background.png')
-
-    def draw(self):
-        self.image.draw(400, 300)
-
-    def update(self):
-        pass
-
-
-class ModeSelect:
-    image = None
-
-    def __init__(self, x = 400, y = 300): # 생성좌표 (400, 300), 속도는 1
-        if self.image == None:
-            self.image = load_image('mode_select_UI.png')
-        self.x, self.y = x, y
-
-    def draw(self):
-        self.image.draw(self.x, self.y)
-
-    def update(self):
-        pass
-
-    def text(self, param, param1, param2, param3):
-        pass    # 아직 미완성.
-
-
 class GameBackground:
     def __init__(self):
         self.image = load_image('game_background.png')
