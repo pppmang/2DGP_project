@@ -1,10 +1,10 @@
 from pico2d import load_image
 
 
-life = load_image('life.png')
-finish_line = load_image('finish_line.png')
+# life = load_image('life.png')
+# finish_line = load_image('finish_line.png')
 
 
 
-button = load_image('game_button.png')
-popup = load_image('game_pop_up_UI.png')
+# button = load_image('game_button.png')
+# popup = load_image('game_pop_up_UI.png')
