@@ -1,8 +1,31 @@
 from pico2d import *
+
 from background import GameBackground, StartMenu, ModeSelect
+import game_framework
+import game_world
+
+from skier import Skier
 
 # 모드 선택 변수
 selected_mode = None
+
+
+def handle_events():
+    events = get_events()
+    for event in events:
+        if event.type == SDL_QUIT:
+            game_framework.quit()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            game_framework.quit()
+        else:
+            skier.handle_event(event)
+
+
+def init():
+    global startmenu
+    global gamebackground
+    global skier
+
 
 
 def mode_selection():
