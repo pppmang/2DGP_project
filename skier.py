@@ -1,3 +1,5 @@
+import random
+
 from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle
 
 import game_world
@@ -37,6 +39,10 @@ class Skier:
         self.x, self.y = 500, 1300
         self.frame = 0
         self.action = 9
+        self.frame_width = 57
+        self.frame_height = 56
+        self.frame_x = random.randint(0, 10) * self.frame_width
+        self.frame_y = 0
         self.dir = 0    # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
         self.image = load_image('skier.png')
         self.speed = 2
@@ -54,6 +60,7 @@ class Skier:
 
     def draw(self):
         # self.state_machine.draw()
+        self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
         draw_rectangle(*self.get_bb())
         pass
 

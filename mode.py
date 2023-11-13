@@ -100,10 +100,10 @@ class InfinityMode:
 
     def draw(self):
         self.background.draw()
+        self.skier.draw()  # Skier 그리기
 
         for i in range(self.life_count):
             self.life_image.draw(50 + i * 80, 1450)
-        self.skier.draw()  # Skier 그리기
 
     def update(self):
         self.background.update()
