@@ -39,7 +39,7 @@ class Skier:
         self.x, self.y = 500, 1300
         self.frame = 0
         self.action = 9
-        self.frame_width = 57
+        self.frame_width = 58
         self.frame_height = 56
         self.frame_x = random.randint(0, 10) * self.frame_width
         self.frame_y = 0
