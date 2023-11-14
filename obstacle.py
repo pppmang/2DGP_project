@@ -12,7 +12,7 @@ class Flag:
         self.frame_x = random.randint(0, 10) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1200)
+        self.y = random.randint(0, 50)
         self.skier = Skier()
 
     def draw(self):
@@ -33,7 +33,7 @@ class Tree:
         self.frame_x = random.randint(0, 3) * self.frame_width
         self.frame_y = random.randint(0, 2) * self.frame_height
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1200)
+        self.y = random.randint(0, 50)
         self.skier = Skier()
 
     def draw(self):
@@ -54,7 +54,7 @@ class Rock:
         self.frame_x = random.randint(0, 4) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(30, 1200)
+        self.y = random.randint(0, 50)
         self.skier = Skier()
 
     def draw(self):
