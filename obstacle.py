@@ -17,8 +17,8 @@ class Flag:
 
     def draw(self):
         # 나무 크기 조정
-        draw_width = int(self.frame_width * 1.5)
-        draw_height = int(self.frame_height * 1.5)
+        draw_width = int(self.frame_width * 1.2)
+        draw_height = int(self.frame_height * 1.2)
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y, draw_width, draw_height)
 
     def update(self):
@@ -59,8 +59,8 @@ class Rock:
 
     def draw(self):
         # 돌 크기 조정
-        draw_width = int(self.frame_width * 0.5)
-        draw_height = int(self.frame_height * 0.5)
+        draw_width = int(self.frame_width * 0.3)
+        draw_height = int(self.frame_height * 0.3)
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y, draw_width, draw_height)
 
     def update(self):

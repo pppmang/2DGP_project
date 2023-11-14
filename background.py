@@ -32,7 +32,7 @@ class GameBackground:
         if self.y < -1500:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
             self.y = 0
 
-        if random.random() < 0.005:
+        if random.random() < 0.007:
             new_obstacle = self.generate_obstacle()
             # 새로운 장애물이 이미 생성된 장애물들과 겹치지 않도록 확인
             while any(self.check_collision(new_obstacle, existing_obstacle) for existing_obstacle in self.obstacles):

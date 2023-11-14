@@ -41,7 +41,7 @@ class Skier:
         self.action = 9
         self.frame_width = 58
         self.frame_height = 56
-        self.frame_x = random.randint(0, 10) * self.frame_width
+        self.frame_x = self.frame_width
         self.frame_y = 0
         self.dir = 0    # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
         self.image = load_image('skier.png')
