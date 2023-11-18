@@ -14,7 +14,10 @@ class GameBackground:
         self.skier = Skier()
 
     def draw(self):
-        self.image.draw(500, 750)
+        image_height = self.image.h
+        self.image.draw(500, 750 - self.y)
+        if self.y > 0:
+            self.image.draw(500, 750 - self.y + image_height)
         for obstacle in self.obstacles:
             obstacle.draw()
 
@@ -29,8 +32,8 @@ class GameBackground:
 
     def update(self):
         self.y -= self.skier.speed
-        if self.y < -1500:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
-            self.y = 0
+        if self.y < 0:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
+            self.y = 1500
 
         if random.random() < 0.007:
             new_obstacle = self.generate_obstacle()
