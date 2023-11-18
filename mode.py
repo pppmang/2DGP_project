@@ -3,6 +3,7 @@ from pico2d import *
 from background import GameBackground
 import game_framework
 import game_world
+from obstacle import FinishLine
 
 from skier import Skier
 
@@ -79,17 +80,21 @@ class NormalMode:
     def __init__(self):
         self.background = GameBackground()
         self.skier = Skier()    # Skier 객체 생성
+        self.finish_line = FinishLine()
 
     def draw(self):
         self.background.draw()
         self.skier.draw()  # Skier 그리기
+        self.finish_line.draw()
 
     def update(self):
         self.background.update()
         self.skier.update()  # Skier 업데이트
+        self.finish_line.update()
 
     def handle_event(self, event):
         self.skier.handle_event(event)  # Skier 이벤트 처리
+
 
 class InfinityMode:
     def __init__(self):
@@ -103,7 +108,7 @@ class InfinityMode:
         self.skier.draw()  # Skier 그리기
 
         for i in range(self.life_count):
-            self.life_image.draw(50 + i * 80, 1450)
+            self.life_image.clip_draw(50 + i * 80, 1450)
 
     def update(self):
         self.background.update()
