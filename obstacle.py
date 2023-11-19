@@ -85,7 +85,7 @@ class FinishLine:
         self.frame_width = 2000
         self.frame_height = 247
         self.x = 0
-        self.y = -100
+        self.y = -10000
         self.skier = Skier()
 
     def draw(self):
