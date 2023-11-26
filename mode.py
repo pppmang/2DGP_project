@@ -159,4 +159,4 @@ class GameFinish:
                     if self.selected_button == 'PLAY_AGAIN':
                         return self.mode_select.selected_mode
                     elif self.selected_button == 'HOME':
-                        return self.start_menu.draw
+                        return self.start_menu
