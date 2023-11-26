@@ -13,7 +13,6 @@ while running:
 
     if current_mode is None:
         start_menu.draw()
-        mode_select.draw()
 
     if current_mode is not None:
         current_mode.update()
