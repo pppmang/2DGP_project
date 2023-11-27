@@ -19,18 +19,6 @@ class StartMenu:
         pass
 
 
-class GameName:
-    def __init__(self):
-        self.x, self.y = 700, 600
-        self.font = load_font('InkFree.TTF', 200)
-
-    def draw(self):
-        self.font.draw(self.x, self.y, 'The Ski', (100, 0, 60))
-
-    def update(self):
-        pass
-
-
 class ModeSelect:
     image = None
 
@@ -112,8 +100,6 @@ class InfinityMode:
     def __init__(self):
         self.background = GameBackground()
         self.life_image = load_image('life.png')
-        self.width = 100
-        self.height = 122
         self.life_count = 3     # 초기 플레이어 생명 개수
         self.skier = Skier()    # Skier 객체 생성
 
@@ -122,7 +108,7 @@ class InfinityMode:
         self.skier.draw()  # Skier 그리기
 
         for i in range(self.life_count):
-            self.life_image.clip_draw(0, 0, self.width, self.height,50 + i * 80, 1450)
+            self.life_image.clip_draw(50 + i * 80, 1450)
 
     def update(self):
         self.background.update()
