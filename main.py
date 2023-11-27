@@ -1,10 +1,11 @@
 from pico2d import *
-from mode import StartMenu, ModeSelect, NormalMode, InfinityMode
+from mode import StartMenu, ModeSelect, NormalMode, InfinityMode, GameName
 
 open_canvas(1500, 840)
 
 start_menu = StartMenu()
 mode_select = ModeSelect()
+game_name = GameName()
 current_mode = None
 
 running = True
@@ -14,6 +15,7 @@ while running:
     if current_mode is None:
         start_menu.draw()
         mode_select.draw()
+        game_name.draw()
 
     if current_mode is not None:
         current_mode.update()
