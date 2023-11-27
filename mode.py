@@ -2,7 +2,6 @@ from pico2d import *
 
 from background import GameBackground
 import game_framework
-import game_world
 from obstacle import FinishLine
 
 from skier import Skier

@@ -1,7 +1,8 @@
 import random
 
-from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle
+from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp
 
+import game_framework
 import game_world
 
 
@@ -21,9 +22,101 @@ def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
 
+# Skier Run Speed
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 35.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# Skier Action Speed
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 11
+
+
 class Idle:
     @staticmethod
     def enter(skier, e):
+        pass
+
+    @staticmethod
+    def exit(skier, e):
+        pass
+
+    @staticmethod
+    def do(skier, e):
+        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+
+    @staticmethod
+    def draw(skier):
+        skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height, skier.frame_width, skier.frame_height, skier.x, skier.y)
+
+
+class SkiRight:
+    @staticmethod
+    def enter(skier, e):
+        skier.action = 1
+        pass
+
+    @staticmethod
+    def exit(skier, e):
+        pass
+
+    @staticmethod
+    def do(skier):
+        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+        skier.x += RUN_SPEED_PPS * game_framework.frame_time
+        skier.x = clamp(70, skier.x, 1500 - 70)
+        skier.y = 1300
+        pass
+
+    @staticmethod
+    def draw(skier):
+        skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
+                              skier.frame_width, skier.frame_height, skier.x, skier.y)
+
+
+class SkiLeft:
+    @staticmethod
+    def enter(skier, e):
+        skier.action = 1
+        pass
+
+    @staticmethod
+    def exit(skier, e):
+        pass
+
+    @staticmethod
+    def do(skier):
+        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+        skier.x -= RUN_SPEED_PPS * game_framework.frame_time
+        skier.x = clamp(70, skier.x, 1500 - 70)
+        skier.y = 1300
+        pass
+
+    @staticmethod
+    def draw(skier):
+        skier.clip_composite_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
+                                  skier.frame_width, skier.frame_height, 0, 'h',
+                                  skier.x, skier.y, skier.frame_width, skier.frame_height)
+
+class BlackOut:
+    @staticmethod
+    def enter(skier, e):
+        skier.frame = 2
+        pass
+
+    @staticmethod
+    def exit(skier, e):
+        pass
+
+    @staticmethod
+    def do(skier):
+        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+
+    @staticmethod
+    def draw(skier):
         pass
 
 
@@ -31,16 +124,39 @@ class StateMachine:
     def __init__(self, skier):
         self.skier = skier
         self.cur_state = Idle
-        self.transitions = {}
+        self.transitions = {
+            Idle: {right_down: SkiRight, left_down: SkiLeft, right_up: Idle, left_up: Idle},
+            SkiRight: {right_up: Idle, left_down: Idle},
+            SkiLeft: {left_up: Idle, right_down: Idle}
+        }
+
+    def start(self):
+        self.cur_state.enter(self.skier, ('NONE', 0))
+
+    def update(self):
+        self.cur_state.do(self.skier)
+
+    def handle_event(self, e):
+        for check_event, next_state in self.transitions[self.cur_state].items():
+            if check_event(e):
+                self.cur_state.exit(self.skier, e)
+                self.cur_state = next_state
+                self.cur_state.enter(self.skier, e)
+                return True
+
+        return False
+
+    def draw(self):
+        self.cur_state.draw(self.skier)
 
 
 class Skier:
     def __init__(self):
         self.x, self.y = 500, 1300
         self.frame = 0
-        self.action = 9
-        self.frame_width = 58
-        self.frame_height = 56
+        self.action = 0
+        self.frame_width = 80
+        self.frame_height = 60
         self.frame_x = self.frame_width
         self.frame_y = 0
         self.dir = 0    # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)

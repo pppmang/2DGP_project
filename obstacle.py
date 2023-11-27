@@ -104,3 +104,4 @@ class FinishLine:
         match group:
             case 'skier:finishline':
                 return self.game_finish
+
