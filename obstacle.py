@@ -1,6 +1,7 @@
 from pico2d import load_image, draw_rectangle
 import random
 
+from mode import GameFinish
 from skier import Skier
 
 
@@ -81,6 +82,7 @@ class Rock:
 
 class FinishLine:
     def __init__(self):
+        self.game_finish = GameFinish()
         self.image = load_image('finish_line.png')
         self.frame_width = 2000
         self.frame_height = 247
@@ -97,3 +99,8 @@ class FinishLine:
 
     def get_bb(self):
         return self.x, self.y - 120, self.x + 1000, self.y - 50
+
+    def handle_collision(self, group, other):
+        match group:
+            case 'skier:finishline':
+                return self.game_finish
