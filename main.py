@@ -14,8 +14,11 @@ while running:
 
     if current_mode is None:
         start_menu.draw()
+<<<<<<< HEAD
         mode_select.draw()
         game_name.draw()
+=======
+>>>>>>> 2f4e555e5183f880f24ae8f74d8c4ad51bf70836
 
     if current_mode is not None:
         current_mode.update()
