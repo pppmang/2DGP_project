@@ -1,7 +1,8 @@
 from pico2d import *
 
 import game_framework
-import play_mode
+import infinity_mode
+import normal_mode
 from mode import StartMenu, ModeSelect
 
 
@@ -33,4 +34,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif mode_select.handle_event(event):
-            game_framework.change_mode(play_mode)
+            if mode_select.selected_mode == 'NORMAL':
+                game_framework.change_mode(normal_mode)
+            elif mode_select.selected_mode == 'INFINITY':
+                game_framework.change_mode(infinity_mode)
