@@ -29,10 +29,7 @@ def handle_events():
 
 def init():
     global skier
-    global start_menu
     global game_background
-
-    start_menu = StartMenu()
 
     skier = Skier()
     game_world.add_object(skier, 2)

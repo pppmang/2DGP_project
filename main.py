@@ -1,11 +1,10 @@
 from pico2d import *
 
 import game_framework
-from mode import StartMenu, ModeSelect, NormalMode, InfinityMode
+from mode import ModeSelect
 
 open_canvas(1500, 840)
 
-start_menu = StartMenu()
 mode_select = ModeSelect()
 current_mode = None
 
