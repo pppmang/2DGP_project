@@ -121,3 +121,6 @@ class Obstacle:
             return True
         return False
 
+    def handle_collision(self, group):
+
+

@@ -40,7 +40,7 @@ def init():
 
     skier = Skier()
     game_world.add_object(skier, 2)
-    game_world.add_collision_pair('skier:finish_line', skier, None)
+    game_world.add_collision_pair('skier:finishline', skier, None)
     game_world.add_collision_pair('skier:obstacle', skier, None)
 
     obstacle = Obstacle()
@@ -51,6 +51,7 @@ def init():
     normal_mode = NormalMode()
     finishline = normal_mode.finish_line
     game_world.add_object(finishline, 1)
+    game_world.add_collision_pair('skier:finishline', None, finishline)
 
 
 def finish():

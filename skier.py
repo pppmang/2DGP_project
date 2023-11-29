@@ -186,4 +186,5 @@ class Skier:
             case 'skier:finishline':
                 print('Finish')
 
-        pass
+            case 'skier:obstacle':
+                print('BlackOut')
