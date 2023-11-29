@@ -1,4 +1,6 @@
 from pico2d import *
+
+import game_framework
 from mode import StartMenu, ModeSelect, NormalMode, InfinityMode
 
 open_canvas(1500, 840)
@@ -24,7 +26,7 @@ while running:
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         else:

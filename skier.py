@@ -29,6 +29,8 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
+# 실제 알파인 스키 최고 속도 160 km/h
+
 # Skier Action Speed
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -38,19 +40,20 @@ FRAMES_PER_ACTION = 11
 class Idle:
     @staticmethod
     def enter(skier, e):
-        pass
+        skier.action = 0
 
     @staticmethod
     def exit(skier, e):
         pass
 
     @staticmethod
-    def do(skier, e):
+    def do(skier):
         skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
 
     @staticmethod
     def draw(skier):
-        skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height, skier.frame_width, skier.frame_height, skier.x, skier.y)
+        skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
+                              skier.frame_width, skier.frame_height, skier.x, skier.y)
 
 
 class SkiRight:
@@ -97,9 +100,10 @@ class SkiLeft:
 
     @staticmethod
     def draw(skier):
-        skier.clip_composite_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
-                                  skier.frame_width, skier.frame_height, 0, 'h',
-                                  skier.x, skier.y, skier.frame_width, skier.frame_height)
+        skier.image.clip_composite_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
+                                        skier.frame_width, skier.frame_height, 0, 'h',
+                                        skier.x, skier.y, skier.frame_width, skier.frame_height)
+
 
 class BlackOut:
     @staticmethod
@@ -126,8 +130,8 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: SkiRight, left_down: SkiLeft, right_up: Idle, left_up: Idle},
-            SkiRight: {right_up: Idle, left_down: Idle},
-            SkiLeft: {left_up: Idle, right_down: Idle}
+            SkiRight: {right_up: Idle, left_down: SkiLeft},
+            SkiLeft: {left_up: Idle, right_down: SkiRight}
         }
 
     def start(self):
@@ -159,29 +163,27 @@ class Skier:
         self.frame_height = 60
         self.frame_x = self.frame_width
         self.frame_y = 0
-        self.dir = 0    # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
+        self.dir = 0  # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
         self.image = load_image('skier.png')
-        self.speed = 2
-        # self.state_machine = StateMachine(self)
-        # self.state_machine.start()
+        self.state_machine = StateMachine(self)
+        self.state_machine.start()
 
     def update(self):
-        pass
-        # self.state_machine.update()
-        # self.x += self.dir * 5      # skier 이동 속도 (일단 고정)
+        self.state_machine.update()
 
     def handle_event(self, event):
-        # self.state_machine.handle_event(('INPUT', event))
-        pass
+        self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
-        # self.state_machine.draw()
-        self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y)
+        self.state_machine.draw()
         draw_rectangle(*self.get_bb())
-        pass
 
     def get_bb(self):
-        return self.x -25, self.y - 28, self.x + 25, self.y + 28
+        return self.x - 25, self.y - 28, self.x + 25, self.y + 28
 
     def handle_collision(self, group, other):
+        match group:
+            case 'skier:finishline':
+                print('Finish')
+
         pass

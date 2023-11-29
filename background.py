@@ -2,8 +2,9 @@ import random
 
 from pico2d import load_image
 
+import game_framework
 from obstacle import Rock, Tree, Flag
-from skier import Skier
+from skier import Skier, RUN_SPEED_PPS
 
 
 class GameBackground:
@@ -31,11 +32,11 @@ class GameBackground:
             return Rock()
 
     def update(self):
-        self.y -= self.skier.speed
+        self.y -= RUN_SPEED_PPS * game_framework.frame_time
         if self.y < 0:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
             self.y = 1500
 
-        if random.random() < 0.007:
+        if random.random() < 0.003:
             new_obstacle = self.generate_obstacle()
             # 새로운 장애물이 이미 생성된 장애물들과 겹치지 않도록 확인
             while any(self.check_collision(new_obstacle, existing_obstacle) for existing_obstacle in self.obstacles):
