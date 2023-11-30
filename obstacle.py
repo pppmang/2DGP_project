@@ -1,9 +1,5 @@
-from pico2d import load_image, draw_rectangle
 import random
-
-import game_framework
-from skier import RUN_SPEED_PPS
-from score import Score
+from need import *
 
 
 class Flag:
@@ -68,8 +64,8 @@ class Rock:
 
     def draw(self):
         # 돌 크기 조정
-        draw_width = int(self.frame_width * 0.3)
-        draw_height = int(self.frame_height * 0.3)
+        draw_width = int(self.frame_width * 0.2)
+        draw_height = int(self.frame_height * 0.2)
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y,
                              draw_width, draw_height)
         draw_rectangle(*self.get_bb())
@@ -82,10 +78,11 @@ class Rock:
 
 
 class Obstacle:
-    def __init__(self, score):
+    def __init__(self):
         self.obstacles = []
         self.obstacle_type = None
-        self.score = score
+        self.score = Score()
+        self.infinity_mode = InfinityMode()
 
     def draw(self):
         for obstacle in self.obstacles:
@@ -127,8 +124,12 @@ class Obstacle:
     def handle_collision(self, group):
         match group:
             case 'skier:obstacle':
+                obstacle_type = self.obstacle_type
                 print('BlackOut')
-                self.score.obstacle_collision(self.type)
+                self.score.obstacle_collision(obstacle_type)
+                if obstacle_type in ["tree", "rock"]:
+                    return self.infinity_mode.handle_collision(group,self)
+                else: return None
 
 
 

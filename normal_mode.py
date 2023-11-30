@@ -3,9 +3,12 @@ import game_framework
 
 import game_world
 from background import GameBackground
-from mode import StartMenu, ModeSelect, NormalMode, InfinityMode, FinishLine
+from mode import NormalMode
 from obstacle import Obstacle
+from score import Score
 from skier import Skier
+from start_menu import ModeSelect
+
 
 def handle_events():
     mode_select = ModeSelect()
@@ -28,6 +31,7 @@ def init():
     global game_background
     global normal_mode
     global finishline
+    global score
 
     game_background = GameBackground()
     game_world.add_object(game_background, 0)
@@ -47,7 +51,8 @@ def init():
     game_world.add_object(finishline, 1)
     game_world.add_collision_pair('skier:finishline', None, finishline)
 
-    start_menu = StartMenu()
+    score = Score()
+    game_world.add_object(score, 2)
 
 
 def finish():

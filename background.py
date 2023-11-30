@@ -1,10 +1,4 @@
-import random
-
-from pico2d import load_image, get_events, resize_canvas, SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE
-
-import game_framework
-from obstacle import Obstacle
-from skier import Skier, RUN_SPEED_PPS
+from need import *
 
 
 class GameBackground:
@@ -13,6 +7,7 @@ class GameBackground:
         self.obstacle = Obstacle()
         self.y = 0
         self.skier = Skier()
+        self.score = Score()
 
     def draw(self):
         image_height = self.image.h
@@ -27,6 +22,7 @@ class GameBackground:
             self.y = 1500
 
         self.obstacle.update()
+        self.score.increase_distance(RUN_SPEED_PPS * game_framework.frame_time)  # 수정된 부분
 
     def check_collision(self, obstacle1, obstacle2):
         self.obstacle.check_collision(obstacle1, obstacle2)

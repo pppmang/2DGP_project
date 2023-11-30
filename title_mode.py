@@ -1,9 +1,6 @@
-from pico2d import *
-
-import game_framework
 import infinity_mode
 import normal_mode
-from mode import StartMenu, ModeSelect
+from need import *
 
 
 def init():

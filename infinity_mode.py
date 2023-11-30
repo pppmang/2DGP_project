@@ -1,11 +1,5 @@
-from pico2d import *
-import game_framework
-
 import game_world
-from background import GameBackground
-from mode import StartMenu, ModeSelect, InfinityMode
-from obstacle import Obstacle
-from skier import Skier
+from need import *
 
 
 def handle_events():
@@ -28,8 +22,8 @@ def init():
     global game_background
     global infinity_mode
 
-    game_background = GameBackground()
-    game_world.add_object(game_background, 0)
+    infinity_mode = InfinityMode()
+    game_world.add_object(infinity_mode, 0)
 
     skier = Skier()
     game_world.add_object(skier, 2)
@@ -41,7 +35,9 @@ def init():
         game_world.add_object(obstacle, 1)
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
-    infinity_mode = InfinityMode()
+    score = Score()
+    game_world.add_object(score, 2)
+
 
 
 def finish():
