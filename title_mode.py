@@ -15,9 +15,7 @@ def init():
 
 def draw():
     clear_canvas()
-    start_menu.image.draw(750, 420)
-    start_menu.mode_select.draw()
-    start_menu.font.draw(800, 400, 'The SKI', (0, 0, 0))
+    start_menu.draw()
     update_canvas()
 
 def update():

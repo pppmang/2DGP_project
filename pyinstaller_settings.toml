@@ -1,0 +1,20 @@
+# 메인 파일 이름을 지정하세요.
+main_file = 'main.py'
+
+# 데이타 파일들을 지정하세요.
+data_files = [
+    'finish_line.png',
+    'flag.png',
+    'game_background.png',
+    'game_button_UI.png',
+    'game_pop_up_UI.png',
+    'GOTHICB.TTF', 'Inkfree.ttf',
+    'life.png', 'mode_select_UI.png',
+    'rock.png', 'skier.png', 'start_menu_background.png',
+    'tree.png'
+]
+
+# 데이타가 들어있는 폴더들을 지정하세요.
+data_folders = [
+]
+
