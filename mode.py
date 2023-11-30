@@ -15,7 +15,7 @@ class StartMenu:
     def draw(self):
         self.image.draw(750, 420)
         self.mode_select.draw()
-        self.font.draw(800, 400, 'The SKI', (0, 0, 0))
+        self.font.draw(800, 400, 'The SKI', (255, 255, 255))
 
     def update(self):
         pass
@@ -95,6 +95,7 @@ class NormalMode:
         self.finish_line.update()
 
     def handle_event(self, event):
+        self.background.handle_event(event)
         self.skier.handle_event(event)  # Skier 이벤트 처리
 
 
@@ -118,6 +119,9 @@ class InfinityMode:
 
     def handle_event(self, event):
         self.skier.handle_event(event)  # Skier 이벤트 처리
+
+    def handle_collision(self, group, other):
+        pass
 
 
 class FinishLine:

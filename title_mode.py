@@ -20,10 +20,13 @@ def draw():
     start_menu.font.draw(800, 400, 'The SKI', (0, 0, 0))
     update_canvas()
 
+def update():
+    pass
+
 
 def finish():
     global start_menu
-    del start_menu
+    start_menu = None
 
 
 def handle_events():

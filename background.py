@@ -1,6 +1,6 @@
 import random
 
-from pico2d import load_image
+from pico2d import load_image, get_events, resize_canvas, SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE
 
 import game_framework
 from obstacle import Obstacle
@@ -18,7 +18,7 @@ class GameBackground:
         image_height = self.image.h
         self.image.draw(500, 750 - self.y)
         if self.y > 0:
-            self.image.draw(500, 750 - self.y + image_height)
+            self.image.clip_draw(0, 0, 1000, 1500, 500, 750 - self.y + image_height)
         self.obstacle.draw()
 
     def update(self):

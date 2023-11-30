@@ -122,5 +122,9 @@ class Obstacle:
         return False
 
     def handle_collision(self, group):
+        match group:
+            case 'skier:obstacle':
+                print('BlackOut')
+
 
 

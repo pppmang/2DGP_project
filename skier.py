@@ -41,6 +41,8 @@ class Idle:
     @staticmethod
     def enter(skier, e):
         skier.action = 0
+        skier.speed = 0
+        skier.dir = 0
 
     @staticmethod
     def exit(skier, e):
@@ -48,7 +50,8 @@ class Idle:
 
     @staticmethod
     def do(skier):
-        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+        pass
+        # skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
 
     @staticmethod
     def draw(skier):
@@ -60,7 +63,9 @@ class SkiRight:
     @staticmethod
     def enter(skier, e):
         skier.action = 1
-        pass
+        skier.speed = RUN_SPEED_PPS
+        skier.dir = 1
+
 
     @staticmethod
     def exit(skier, e):
@@ -84,7 +89,8 @@ class SkiLeft:
     @staticmethod
     def enter(skier, e):
         skier.action = 1
-        pass
+        skier.speed = RUN_SPEED_PPS
+        skier.dir = -1
 
     @staticmethod
     def exit(skier, e):
@@ -108,7 +114,8 @@ class SkiLeft:
 class BlackOut:
     @staticmethod
     def enter(skier, e):
-        skier.frame = 2
+        skier.action = 2
+        skier.speed = 0
         pass
 
     @staticmethod
@@ -161,9 +168,7 @@ class Skier:
         self.action = 0
         self.frame_width = 80
         self.frame_height = 60
-        self.frame_x = self.frame_width
-        self.frame_y = 0
-        self.dir = 0  # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
+        # self.dir = 0  # 오른쪽, 왼쪽 방향 구분 위해서 ( 오른쪽 : 1, 왼쪽 : -1)
         self.image = load_image('skier.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()

@@ -7,7 +7,6 @@ from mode import StartMenu, ModeSelect, NormalMode, InfinityMode, FinishLine
 from obstacle import Obstacle
 from skier import Skier
 
-
 def handle_events():
     mode_select = ModeSelect()
     current_mode = None
@@ -18,12 +17,6 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-        elif current_mode is None:
-            current_mode = mode_select.handle_event(event)
-            # 게임 진행 화면으로 전환할 때 캔버스 크기 변경
-            if current_mode is not None:
-                canvas_width, canvas_height = 1000, 1500
-                resize_canvas(canvas_width, canvas_height)
         else:
             skier.handle_event(event)
 
@@ -31,6 +24,7 @@ def handle_events():
 def init():
     global skier
     global obstacle
+    global start_menu
     global game_background
     global normal_mode
     global finishline
@@ -53,6 +47,8 @@ def init():
     game_world.add_object(finishline, 1)
     game_world.add_collision_pair('skier:finishline', None, finishline)
 
+    start_menu = StartMenu()
+
 
 def finish():
     game_world.clear()
@@ -66,6 +62,8 @@ def update():
 
 def draw():
     clear_canvas()
+    canvas_width, canvas_height = 1000, 1500
+    resize_canvas(canvas_width, canvas_height)
     game_world.render()
     update_canvas()
 
