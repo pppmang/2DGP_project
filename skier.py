@@ -3,6 +3,7 @@ import random
 from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp
 
 import game_framework
+from score import Score
 import game_world
 
 
@@ -162,7 +163,7 @@ class StateMachine:
 
 
 class Skier:
-    def __init__(self):
+    def __init__(self, score):
         self.x, self.y = 500, 1300
         self.frame = 0
         self.action = 0
@@ -172,9 +173,11 @@ class Skier:
         self.image = load_image('skier.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+        self.score = score
 
     def update(self):
         self.state_machine.update()
+        self.score.increase_score(self.y)
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -193,3 +196,4 @@ class Skier:
 
             case 'skier:obstacle':
                 print('BlackOut')
+                self.score.obstacle_collision(other.type)

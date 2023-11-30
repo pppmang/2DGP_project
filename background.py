@@ -16,7 +16,7 @@ class GameBackground:
 
     def draw(self):
         image_height = self.image.h
-        self.image.draw(500, 750 - self.y)
+        self.image.clip_draw(0, 0, 1000, 1500, 500, 750 - self.y)
         if self.y > 0:
             self.image.clip_draw(0, 0, 1000, 1500, 500, 750 - self.y + image_height)
         self.obstacle.draw()

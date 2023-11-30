@@ -3,6 +3,7 @@ import random
 
 import game_framework
 from skier import RUN_SPEED_PPS
+from score import Score
 
 
 class Flag:
@@ -81,8 +82,10 @@ class Rock:
 
 
 class Obstacle:
-    def __init__(self):
+    def __init__(self, score):
         self.obstacles = []
+        self.obstacle_type = None
+        self.score = score
 
     def draw(self):
         for obstacle in self.obstacles:
@@ -125,6 +128,7 @@ class Obstacle:
         match group:
             case 'skier:obstacle':
                 print('BlackOut')
+                self.score.obstacle_collision(self.type)
 
 
 
