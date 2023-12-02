@@ -1,5 +1,14 @@
 import game_world
-from need import *
+import game_framework
+from pico2d import *
+
+import server
+from skier import Skier
+from mode import ModeSelect
+from score import Score
+from obstacle import Obstacle
+
+from mode import InfinityMode as Background
 
 
 def handle_events():
@@ -13,22 +22,19 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            skier.handle_event(event)
+            server.skier.handle_event(event)
 
 
 def init():
-    global skier
     global obstacle
-    global game_background
-    global infinity_mode
 
-    infinity_mode = InfinityMode()
-    game_world.add_object(infinity_mode, 0)
+    server.background = Background()
+    game_world.add_object(server.background, 0)
 
-    skier = Skier()
-    game_world.add_object(skier, 2)
-    game_world.add_collision_pair('skier:finish_line', skier, None)
-    game_world.add_collision_pair('skier:obstacle', skier, None)
+    server.skier = Skier()
+    game_world.add_object(server.skier, 2)
+    game_world.add_collision_pair('skier:finish_line', server.skier, None)
+    game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
     obstacle = Obstacle()
     for obstacle in obstacle.obstacles:

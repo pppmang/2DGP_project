@@ -1,13 +1,14 @@
 from pico2d import *
 import game_framework
-
 import game_world
-from background import GameBackground
-from mode import NormalMode
-from obstacle import Obstacle
-from score import Score
+import server
+
 from skier import Skier
-from start_menu import ModeSelect
+from score import Score
+from mode import NormalMode, ModeSelect
+from obstacle import Obstacle
+
+from background import GameBackground as Background
 
 
 def handle_events():
@@ -21,25 +22,17 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            skier.handle_event(event)
+            server.skier.handle_event(event)
 
 
 def init():
-    global skier
-    global obstacle
-    global start_menu
-    global game_background
-    global normal_mode
-    global finishline
-    global score
+    server.background = Background()
+    game_world.add_object(server.background, 0)
 
-    game_background = GameBackground()
-    game_world.add_object(game_background, 0)
-
-    skier = Skier()
-    game_world.add_object(skier, 2)
-    game_world.add_collision_pair('skier:finishline', skier, None)
-    game_world.add_collision_pair('skier:obstacle', skier, None)
+    server.skier = Skier()
+    game_world.add_object(server.skier, 2)
+    game_world.add_collision_pair('skier:finishline', server.skier, None)
+    game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
     obstacle = Obstacle()
     for obstacle in obstacle.obstacles:
@@ -52,7 +45,7 @@ def init():
     game_world.add_collision_pair('skier:finishline', None, finishline)
 
     score = Score()
-    game_world.add_object(score, 2)
+    game_world.add_object(score, 3)
 
 
 def finish():

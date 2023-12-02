@@ -1,6 +1,9 @@
+import game_framework
+from pico2d import clear_canvas, update_canvas, get_events, SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE
+
 import infinity_mode
 import normal_mode
-from need import *
+from mode import StartMenu, ModeSelect
 
 
 def init():

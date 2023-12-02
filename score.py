@@ -13,14 +13,18 @@ class Score:
 
     def increase_score(self, value):
         self.score += value
+        self.score = max(0, self.score)
 
     def obstacle_collision(self, obstacle_type):
         if obstacle_type == "flag":
-            self.score += random.randint(20, 100)
+            increase_value = random.randint(20, 100)
+            self.increase_score(increase_value)
         elif obstacle_type == "tree":
-            self.score -= random.randint(20, 50)
+            increase_value = random.randint(20, 50)
+            self.increase_score(-increase_value)
         elif obstacle_type == "rock":
-            self.score -= random.randint(30, 80)
+            increase_value = random.randint(30, 80)
+            self.increase_score(-increase_value)
 
     def update(self):
         pass

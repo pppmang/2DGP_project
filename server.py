@@ -1,0 +1,2 @@
+skier = None
+background = None
