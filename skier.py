@@ -4,7 +4,7 @@ from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, dr
 
 import game_framework
 import server
-from game_finish import GameFinish
+from mode import GameFinish
 
 from score import Score
 

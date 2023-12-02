@@ -2,7 +2,7 @@ import random
 from pico2d import load_image, draw_rectangle
 
 from score import Score
-from background import InfinityMode
+from mode import InfinityMode
 
 
 class Flag:

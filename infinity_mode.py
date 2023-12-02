@@ -8,7 +8,7 @@ from obstacle import Obstacle
 from skier import Skier
 from score import Score
 
-from background import InfinityMode as Background
+from mode import InfinityMode as Background
 
 
 def handle_events():

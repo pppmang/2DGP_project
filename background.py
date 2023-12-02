@@ -1,7 +1,5 @@
 from pico2d import *
 import server
-from game_finish import GameFinish
-
 from score import Score
 
 
@@ -26,24 +24,3 @@ class GameBackground:
         self.score.increase_distance(server.skier.y)
 
 
-class InfinityMode:
-    def __init__(self):
-        self.background = GameBackground()
-        self.life_image = load_image('life.png')
-        self.life_count = 3  # 초기 플레이어 생명 개수
-
-    def draw(self):
-        self.background.draw()
-
-        for i in range(self.life_count):
-            self.life_image.clip_draw(0, 0, 100, 122, 50 + i * 80, 1450)
-
-    def update(self):
-        self.background.update()
-
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle' if other.type in ['rock', 'tree']:
-                self.life_count -= 1
-                if self.life_count <= 0:
-                    return GameFinish()
