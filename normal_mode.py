@@ -5,7 +5,8 @@ import server
 
 from skier import Skier
 from score import Score
-from mode import NormalMode, ModeSelect
+from mode import NormalMode
+from selecting_mode import ModeSelect
 from obstacle import Obstacle
 
 from background import GameBackground as Background

@@ -1,8 +1,8 @@
 from pico2d import *
 import game_framework
 import server
-from obstacle import FinishLine
-from background import GameBackground
+from finish_line import FinishLine
+from game_finish import GameFinish
 from skier import WinningPose
 
 
@@ -15,61 +15,6 @@ def handle_events():
             game_framework.quit()
         else:
             server.skier.handle_event(event)
-
-
-class StartMenu:
-    def __init__(self):
-        self.image = load_image('start_menu_background.png')
-        self.mode_select = ModeSelect()
-        self.font = load_font('InkFree.TTF', 120)
-
-    def draw(self):
-        self.image.draw(750, 420)
-        self.mode_select.draw()
-        self.font.draw(800, 400, 'The SKI', (255, 255, 255))
-
-    def update(self):
-        pass
-
-
-class ModeSelect:
-    image = None
-
-    def __init__(self, x=200, y=100):
-        if self.image is None:
-            self.image = load_image('mode_select_UI.png')
-        self.x, self.y = x, y
-        self.font = load_font('GOTHICB.TTF', 55)
-
-        self.mode_buttons = [
-            {'mode': 'NORMAL', 'x': self.x - 125, 'y': self.y + 5},
-            {'mode': 'INFINITY', 'x': self.x + 200, 'y': self.y + 5}
-        ]
-        self.selected_mode = None
-
-    def draw(self):
-        self.image.draw(self.x, self.y)
-        self.image.draw(self.x + 310, self.y)
-
-        for button in self.mode_buttons:
-            self.font.draw(button['x'], button['y'], button['mode'], (255, 255, 255))
-
-    def update(self):
-        pass
-
-    def handle_event(self, event):
-        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-            for button in self.mode_buttons:
-                x, y = button['x'], button['y']
-
-                if x - 30 < event.x < x + 250 and y + 570 < event.y < y + 690:
-                    self.selected_mode = button['mode']
-
-                    # 모드 선택 후 해당 모드로 화면 전환
-                    if self.selected_mode == 'NORMAL':
-                        return NormalMode()
-                    elif self.selected_mode == 'INFINITY':
-                        return InfinityMode()
 
 
 class NormalMode:
@@ -90,68 +35,8 @@ class NormalMode:
             return GameFinish()
 
 
-class InfinityMode:
-    def __init__(self):
-        self.background = GameBackground()
-        self.life_image = load_image('life.png')
-        self.life_count = 3  # 초기 플레이어 생명 개수
-
-    def draw(self):
-        self.background.draw()
-
-        for i in range(self.life_count):
-            self.life_image.clip_draw(0, 0, 100, 122, 50 + i * 80, 1450)
-
-    def update(self):
-        self.background.update()
-
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle' if other.type in ['rock', 'tree']:
-                self.life_count -= 1
-                if self.life_count <= 0:
-                    return GameFinish()
 
 
-class GameFinish:
-    def __init__(self, x=200, y=200):
-        self.mode_select = ModeSelect()
-        self.finish_UI = load_image('game_pop_up_UI.png')
-        self.button_UI = load_image('game_button_UI.png')
-        self.x, self.y = x, y
-        self.font = load_font('GOTHICB.TTF', 55)
-
-        self.menu_buttons = [
-            {'button': 'PLAY_AGAIN', 'x': self.x - 125, 'y': self.y},
-            {'button': 'HOME', 'x': self.x + 200, 'y': self.y}
-        ]
-        self.selected_button = None
-
-    def update(self):
-        # 화면 갱신 로직 작성
-        pass
-
-    def draw(self):
-        self.finish_UI.draw(self.x, self.y)
-        self.button_UI.draw(self.x, self.y)
-        self.button_UI.draw(self.x + 310, self.y)
-
-        for button in self.menu_buttons:
-            self.font.draw(button['x'], button['y'], button['button'], (255, 255, 255))
-
-    def handle_events(self, event):
-        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-            for button in self.menu_buttons:
-                x, y = button['x'], button['y']
-
-                if x - 30 < event.x < x + 250 and y + 570 < event.y < y + 690:
-                    self.selected_button = button['button']
-
-                    # 메뉴 선택 후 해당 화면으로 전환
-                    if self.selected_button == 'PLAY_AGAIN':
-                        return self.mode_select.selected_mode
-                    elif self.selected_button == 'HOME':
-                        return StartMenu()
 
 
 

@@ -3,7 +3,7 @@ from pico2d import clear_canvas, update_canvas, get_events, SDL_QUIT, SDL_KEYDOW
 
 import infinity_mode
 import normal_mode
-from mode import StartMenu, ModeSelect
+from selecting_mode import StartMenu, ModeSelect
 
 
 def init():

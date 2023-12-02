@@ -4,11 +4,11 @@ from pico2d import *
 
 import server
 from skier import Skier
-from mode import ModeSelect
+from selecting_mode import ModeSelect
 from score import Score
 from obstacle import Obstacle
 
-from mode import InfinityMode as Background
+from background import InfinityMode as Background
 
 
 def handle_events():
