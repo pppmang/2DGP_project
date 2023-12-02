@@ -3,9 +3,8 @@ from time import time
 from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp
 
 import game_framework
-from obstacle import Obstacle
 import server
-from mode import GameFinish
+from game_finish import GameFinish
 
 from score import Score
 
@@ -139,29 +138,29 @@ class BlackOut:
         pass
 
 
-class WinningPose:
-    @staticmethod
-    def enter(skier, e):
-        skier.action = 2
-        skier.speed = 0
-        skier.pose_timer = time() + 5
-        pass
-
-    @staticmethod
-    def exit(skier, e):
-        pass
-
-    @staticmethod
-    def do(skier):
-        if time() > skier.pose_timer:
-            skier.state_machine.handle_event(('TIME_OUT', None))
-
-        skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
-
-    @staticmethod
-    def draw(skier):
-        skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
-                              skier.frame_width, skier.frame_height, skier.sx, skier.sy)
+# class WinningPose:
+#     @staticmethod
+#     def enter(skier, e):
+#         skier.action = 2
+#         skier.speed = 0
+#         skier.pose_timer = time() + 5
+#         pass
+#
+#     @staticmethod
+#     def exit(skier, e):
+#         pass
+#
+#     @staticmethod
+#     def do(skier):
+#         if time() > skier.pose_timer:
+#             skier.state_machine.handle_event(('TIME_OUT', None))
+#
+#         skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
+#
+#     @staticmethod
+#     def draw(skier):
+#         skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
+#                               skier.frame_width, skier.frame_height, skier.sx, skier.sy)
 
 
 class StateMachine:
@@ -234,7 +233,7 @@ class Skier:
                 return GameFinish()
 
             case 'skier:obstacle':
-                obstacle_type = Obstacle.obstacle_type
-                self.score.obstacle_collision(Obstacle.obstacle_type)
+                obstacle_type = server.obstacle.obstacle_type
+                self.score.obstacle_collision(server.obstacle.obstacle_type)
                 if obstacle_type in ["tree", "rock"]:
                     self.state_machine.handle_event(('COLLISION', None))

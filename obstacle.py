@@ -1,10 +1,8 @@
 import random
 from pico2d import load_image, draw_rectangle
-import game_framework
 
 from score import Score
 from background import InfinityMode
-from skier import RUN_SPEED_PPS
 
 
 class Flag:
@@ -26,7 +24,7 @@ class Flag:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.y += RUN_SPEED_PPS * game_framework.frame_time
+        pass
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 30
@@ -51,7 +49,7 @@ class Tree:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.y += RUN_SPEED_PPS * game_framework.frame_time
+        pass
 
     def get_bb(self):
         return self.x - 50, self.y - 60, self.x + 50, self.y + 60
@@ -76,7 +74,7 @@ class Rock:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.y += RUN_SPEED_PPS * game_framework.frame_time
+        pass
 
     def get_bb(self):
         return self.x - 50, self.y - 30, self.x + 50, self.y + 30

@@ -1,9 +1,6 @@
 from pico2d import load_image, draw_rectangle
 
-import game_framework
 from game_finish import GameFinish
-from skier import RUN_SPEED_PPS
-
 
 
 class FinishLine:
@@ -19,7 +16,7 @@ class FinishLine:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.y += RUN_SPEED_PPS * game_framework.frame_time
+        pass
 
     def get_bb(self):
         return self.x, self.y - 120, self.x + 1000, self.y - 50

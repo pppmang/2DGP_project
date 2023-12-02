@@ -1,6 +1,25 @@
-from pico2d import load_image, load_font, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
+from pico2d import *
 
-from selecting_mode import ModeSelect, StartMenu
+import game_framework
+import server
+from finish_line import FinishLine
+# from background import InfinityMode
+from mode import ModeSelect
+
+
+class StartMenu:
+    def __init__(self):
+        self.image = load_image('start_menu_background.png')
+        self.mode_select = ModeSelect()
+        self.font = load_font('InkFree.TTF', 120)
+
+    def draw(self):
+        self.image.draw(750, 420)
+        self.mode_select.draw()
+        self.font.draw(800, 400, 'The SKI', (255, 255, 255))
+
+    def update(self):
+        pass
 
 
 class GameFinish:
@@ -42,3 +61,32 @@ class GameFinish:
                         return self.mode_select.selected_mode
                     elif self.selected_button == 'HOME':
                         return StartMenu()
+
+
+
+
+def handle_events():
+    events = get_events()
+    for event in events:
+        if event.type == SDL_QUIT:
+            game_framework.quit()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            game_framework.quit()
+        else:
+            server.skier.handle_event(event)
+
+
+class NormalMode:
+    def __init__(self):
+        self.finish_line = FinishLine()
+
+    def draw(self):
+        server.skier.draw()  # Skier 그리기
+        self.finish_line.draw()
+
+    def update(self):
+        server.skier.update()  # Skier 업데이트
+        self.finish_line.update()
+
+    def handle_event(self, event):
+        server.skier.handle_event(event)  # Skier 이벤트 처리

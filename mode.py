@@ -1,38 +1,50 @@
 from pico2d import *
-import game_framework
-import server
-from finish_line import FinishLine
-from game_finish import GameFinish
-from skier import WinningPose
+# import game_framework
+# import server
+# from finish_line import FinishLine
+# from selecting_mode import GameFinish
+# from game_finish import GameFinish
+# from skier import WinningPose
 
 
-def handle_events():
-    events = get_events()
-    for event in events:
-        if event.type == SDL_QUIT:
-            game_framework.quit()
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
-        else:
-            server.skier.handle_event(event)
+class ModeSelect:
+    image = None
 
+    def __init__(self, x=200, y=100):
+        if self.image is None:
+            self.image = load_image('mode_select_UI.png')
+        self.x, self.y = x, y
+        self.font = load_font('GOTHICB.TTF', 55)
 
-class NormalMode:
-    def __init__(self):
-        self.finish_line = FinishLine()
+        self.mode_buttons = [
+            {'mode': 'NORMAL', 'x': self.x - 125, 'y': self.y + 5},
+            {'mode': 'INFINITY', 'x': self.x + 200, 'y': self.y + 5}
+        ]
+        self.selected_mode = None
 
     def draw(self):
-        server.skier.draw()  # Skier 그리기
-        self.finish_line.draw()
+        self.image.draw(self.x, self.y)
+        self.image.draw(self.x + 310, self.y)
+
+        for button in self.mode_buttons:
+            self.font.draw(button['x'], button['y'], button['mode'], (255, 255, 255))
 
     def update(self):
-        server.skier.update()  # Skier 업데이트
-        self.finish_line.update()
+        pass
 
     def handle_event(self, event):
-        server.skier.handle_event(event)  # Skier 이벤트 처리
-        if isinstance(server.skier.state_machine.cur_state, WinningPose):
-            return GameFinish()
+        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            for button in self.mode_buttons:
+                x, y = button['x'], button['y']
+
+                if x - 30 < event.x < x + 250 and y + 570 < event.y < y + 690:
+                    self.selected_mode = button['mode']
+
+                    # 모드 선택 후 해당 모드로 화면 전환
+                    if self.selected_mode == 'NORMAL':
+                        return NormalMode()
+                    elif self.selected_mode == 'INFINITY':
+                        return InfinityMode()
 
 
 

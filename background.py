@@ -1,10 +1,8 @@
 from pico2d import *
-import game_framework
 import server
 from game_finish import GameFinish
 
 from score import Score
-from skier import RUN_SPEED_PPS
 
 
 class GameBackground:
@@ -25,7 +23,7 @@ class GameBackground:
 
         self.window_left = clamp(0, self.window_left, self.w - self.cw - 1)
         self.window_bottom = clamp(0, self.window_bottom, self.h - self.ch - 1)
-        self.score.increase_distance(RUN_SPEED_PPS * game_framework.frame_time)
+        self.score.increase_distance(server.skier.y)
 
 
 class InfinityMode:
