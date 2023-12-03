@@ -4,7 +4,8 @@ from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, dr
 
 import game_framework
 import server
-from mode import GameFinish
+from state import FRAMES_PER_ACTION, ACTION_PER_TIME, RUN_SPEED_PPS
+from background import GameFinish
 
 from score import Score
 
@@ -29,19 +30,6 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
-# Skier Run Speed
-PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 35.0  # Km / Hour
-RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
-RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
-RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-
-# 실제 알파인 스키 최고 속도 160 km/h
-
-# Skier Action Speed
-TIME_PER_ACTION = 0.5
-ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 11
 
 
 class Idle:
@@ -62,7 +50,7 @@ class Idle:
     @staticmethod
     def draw(skier):
         skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
-                              skier.frame_width, skier.frame_height, skier.sx, skier.sy)
+                              skier.frame_width, skier.frame_height, skier.x, skier.y)
 
 
 class SkiRight:
@@ -87,7 +75,7 @@ class SkiRight:
     @staticmethod
     def draw(skier):
         skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
-                              skier.frame_width, skier.frame_height, skier.sx, skier.sy)
+                              skier.frame_width, skier.frame_height, skier.x, skier.y)
 
 
 class SkiLeft:
@@ -112,7 +100,7 @@ class SkiLeft:
     def draw(skier):
         skier.image.clip_composite_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
                                         skier.frame_width, skier.frame_height, 0, 'h',
-                                        skier.sx, skier.sy, skier.frame_width, skier.frame_height)
+                                        skier.x, skier.y, skier.frame_width, skier.frame_height)
 
 
 class BlackOut:
@@ -134,33 +122,8 @@ class BlackOut:
     @staticmethod
     def draw(skier):
         skier.image.clip_draw(skier.frame * skier.frame_width, skier.action * skier.frame_height, skier.frame_width,
-                              skier.frame_height, skier.sx, skier.sy)
+                              skier.frame_height, skier.x, skier.y)
         pass
-
-
-# class WinningPose:
-#     @staticmethod
-#     def enter(skier, e):
-#         skier.action = 2
-#         skier.speed = 0
-#         skier.pose_timer = time() + 5
-#         pass
-#
-#     @staticmethod
-#     def exit(skier, e):
-#         pass
-#
-#     @staticmethod
-#     def do(skier):
-#         if time() > skier.pose_timer:
-#             skier.state_machine.handle_event(('TIME_OUT', None))
-#
-#         skier.frame = (skier.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 11
-#
-#     @staticmethod
-#     def draw(skier):
-#         skier.image.clip_draw(int(skier.frame) * skier.frame_width, skier.action * skier.frame_height,
-#                               skier.frame_width, skier.frame_height, skier.sx, skier.sy)
 
 
 class StateMachine:
@@ -197,7 +160,7 @@ class StateMachine:
 class Skier:
     def __init__(self):
         self.x, self.y = 500, 1300
-        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+        self.speed = RUN_SPEED_PPS
         self.frame = 0
         self.action = 0
         self.frame_width = 80
@@ -206,14 +169,21 @@ class Skier:
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.score = Score()
+        self.acceleration_time = time() + 10  # 초기 가속 시간 설정
 
     def update(self):
         self.state_machine.update()
         self.score.increase_distance(self.y)
         self.score.increase_score(self.y)
-        self.x = clamp(70, self.x, server.background.w - 70)
-        self.y = clamp(70, self.y, server.background.h - 70)
 
+        # 10초마다 속도를 증가
+        if time() > self.acceleration_time:
+            self.acceleration_time = time() + 10
+            self.accelerate()
+
+    def accelerate(self):
+        # 스키어 속도 증가
+        self.speed += RUN_SPEED_PPS
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -223,9 +193,7 @@ class Skier:
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        self.sx = self.x - server.background.window_left
-        self.sy = self.y - server.background.window_bottom
-        return self.sx - 25, self.sy - 28, self.sx + 25, self.sy + 28
+        return self.x - 25, self.y - 28, self.x + 25, self.y + 28
 
     def handle_collision(self, group, other):
         match group:

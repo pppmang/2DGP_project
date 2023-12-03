@@ -3,12 +3,12 @@ import game_framework
 from pico2d import *
 
 import server
-from mode import ModeSelect
+from background import ModeSelect
 from obstacle import Obstacle
 from skier import Skier
 from score import Score
 
-from mode import InfinityMode as Background
+from background import InfinityMode as Background
 
 
 def handle_events():
@@ -36,14 +36,13 @@ def init():
     game_world.add_collision_pair('skier:finish_line', server.skier, None)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
-    server.obstacle = Obstacle()
-    for server.obstacle in server.obstacle.obstacles:
-        game_world.add_object(server.obstacle, 1)
-        game_world.add_collision_pair('skier:obstacle', None, server.obstacle)
+    obstacles = Obstacle()
+    for obstacle in obstacles.obstacles:
+        game_world.add_object(obstacle, 1)
+        game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
     score = Score()
     game_world.add_object(score, 2)
-
 
 
 def finish():

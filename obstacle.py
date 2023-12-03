@@ -1,8 +1,9 @@
 import random
 from pico2d import load_image, draw_rectangle
 
-from score import Score
-from mode import InfinityMode
+import game_framework
+import server
+from state import RUN_SPEED_PPS
 
 
 class Flag:
@@ -24,7 +25,7 @@ class Flag:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        pass
+        self.y += server.skier.speed
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 30
@@ -49,7 +50,7 @@ class Tree:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        pass
+        self.y += server.skier.speed * game_framework.frame_time
 
     def get_bb(self):
         return self.x - 50, self.y - 60, self.x + 50, self.y + 60
@@ -67,14 +68,14 @@ class Rock:
 
     def draw(self):
         # 돌 크기 조정
-        draw_width = int(self.frame_width * 0.2)
-        draw_height = int(self.frame_height * 0.2)
+        draw_width = int(self.frame_width * 0.3)
+        draw_height = int(self.frame_height * 0.3)
         self.image.clip_draw(self.frame_x, self.frame_y, self.frame_width, self.frame_height, self.x, self.y,
                              draw_width, draw_height)
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        pass
+        self.y += server.skier.speed * game_framework.frame_time
 
     def get_bb(self):
         return self.x - 50, self.y - 30, self.x + 50, self.y + 30
@@ -83,9 +84,6 @@ class Rock:
 class Obstacle:
     def __init__(self):
         self.obstacles = []
-        self.obstacle_type = None
-        self.score = Score()
-        self.infinity_mode = InfinityMode()
 
     def draw(self):
         for obstacle in self.obstacles:
@@ -123,15 +121,3 @@ class Obstacle:
                 obstacle1.y + obstacle1.frame_height > obstacle2.y):
             return True
         return False
-
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle':
-                obstacle_type = self.obstacle_type
-                print('BlackOut')
-                self.score.obstacle_collision(obstacle_type)
-                if obstacle_type in ["tree", "rock"]:
-                    return self.infinity_mode.handle_collision(group, self)
-                else: return None
-
-
