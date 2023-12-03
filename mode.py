@@ -136,14 +136,15 @@ class FinishLine:
         self.frame_width = 2000
         self.frame_height = 247
         self.x = 0
-        self.y = -10000
+        self.y = -1000
 
     def draw(self):
         self.image.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, self.y)
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        pass
+        # FinishLine이 화면에 나타나도록 y 값을 업데이트합니다.
+        self.y += server.skier.speed * game_framework.frame_time
 
     def get_bb(self):
         return self.x, self.y - 120, self.x + 1000, self.y - 50
