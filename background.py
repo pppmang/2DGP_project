@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import title_mode
 from score import Score
 import server
 from obstacle import Obstacle
@@ -34,6 +35,41 @@ class GameBackground:
 
     def check_collision(self, obstacle1, obstacle2):
         self.obstacle.check_collision(obstacle1, obstacle2)
+
+    def handle_collision(self, group, other):
+        for obstacle in self.obstacle.obstacles:
+            obstacle.handle_collision()
+
+
+
+class InfinityMode:
+    def __init__(self):
+        self.background = GameBackground()
+        self.life_image = load_image('life.png')
+        self.life_count = 3  # 초기 플레이어 생명 개수
+
+    def draw(self):
+        self.background.draw()
+
+        for i in range(self.life_count):
+            self.life_image.clip_draw(0, 0, 100, 122, 50 + i * 80, 1450)
+
+    def update(self):
+        self.background.update()
+
+    def check_collision(self, obstacle1, obstacle2):
+        self.background.obstacle.check_collision(obstacle1, obstacle2)
+
+    def handle_collision(self, group, other):
+        match group:
+            case 'skier:obstacle':
+                for obstacle in self.background.obstacle.obstacles:
+                    obstacle.handle_collision()
+                    obstacle_type = server.obstacle.obstacle_type
+                    if obstacle_type in ['rock', 'tree']:
+                        self.life_count -= 1
+                        if self.life_count <= 0:
+                            server.game_finish()
 
 
 class ModeSelect:
@@ -95,16 +131,17 @@ class GameFinish:
     def __init__(self, x=500, y=1000):
         self.frame_height = 254
         self.frame_width = 505
-        server.skier.speed = 0
+        # server.skier.speed = 0
         self.mode_select = ModeSelect()
         self.finish_UI = load_image('game_pop_up_UI.png')
         self.button_UI = load_image('game_button_UI.png')
         self.x, self.y = x, y
         self.font = load_font('impact.TTF', 55)
+        self.state = 'hide'
 
         self.menu_buttons = [
-            {'button': 'P L A Y A G A I N', 'x': self.x - 160, 'y': self.y - 100},
-            {'button': 'H   O   M   E', 'x': self.x - 105, 'y': self.y - 270}
+            {'button': 'P L A Y A G A I N', 'x': 340, 'y': 900},
+            {'button': 'H      O        M      E', 'x': 340, 'y': 730}
         ]
         self.selected_button = None
 
@@ -112,33 +149,29 @@ class GameFinish:
         pass
 
     def draw(self):
-        draw_width = int(self.frame_width * 1.0)
-        draw_height = int(self.frame_height * 0.6)
+        if self.state == 'draw':
+            draw_width = int(self.frame_width * 1.0)
+            draw_height = int(self.frame_height * 0.6)
 
-        self.finish_UI.draw(self.x, self.y)
-        self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, self.y - 100, draw_width,
-                                 draw_height)
-        self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, self.y - 270, draw_width,
-                                 draw_height)
-
-        for button in self.menu_buttons:
-            self.font.draw(button['x'], button['y'], button['button'], (255, 255, 255))
-
+            self.finish_UI.draw(self.x, self.y)
+            for button in self.menu_buttons:
+                self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, button['y'], draw_width,
+                                         draw_height)
+                self.font.draw(button['x'], button['y'], button['button'], (255, 255, 255))
     def handle_event(self, event):
         if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             for button in self.menu_buttons:
-                x, y = button['x'], button['y']
+                button_x, button_y = self.x + button['x'], self.y - button['y']
 
-                if x - 30 < event.x < x + 250 and y - 100 < event.y < y + 300:
+                if button_x - 570 < event.x < button_x - 120 and button_y + 430 < event.y < button_y + 540:
                     self.selected_button = button['button']
 
                     # 메뉴 선택 후 해당 화면으로 전환
                     if self.selected_button == 'P L A Y A G A I N':
-                        print('PLAY_AGAIN')
-                        # return self.mode_select.selected_mode
-                    elif self.selected_button == 'H   O   M   E':
-                        print('HOME')
-                        # return StartMenu()
+                        # game_framework.change_mode(normal_mode)
+                        pass
+                    elif self.selected_button == 'H      O        M      E':
+                        game_framework.change_mode(title_mode)
 
 
 # def handle_events():
@@ -174,11 +207,10 @@ class FinishLine:
         self.frame_width = 2000
         self.frame_height = 247
         self.x = 0
-        self.y = -50
+        self.y = -10000
 
     def draw(self):
         self.image.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, self.y)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.y += server.skier.speed * game_framework.frame_time
@@ -192,23 +224,4 @@ class FinishLine:
                 pass
 
 
-class InfinityMode:
-    def __init__(self):
-        self.life_image = load_image('life.png')
-        self.life_count = 3  # 초기 플레이어 생명 개수
 
-    def draw(self):
-        server.background.draw()
-
-        for i in range(self.life_count):
-            self.life_image.clip_draw(0, 0, 100, 122, 50 + i * 80, 1450)
-
-    def update(self):
-        server.background.update()
-
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle' if other.type in ['rock', 'tree']:
-                self.life_count -= 1
-                if self.life_count <= 0:
-                    server.game_finish()

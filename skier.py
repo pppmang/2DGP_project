@@ -195,13 +195,9 @@ class Skier:
     def handle_collision(self, group, other):
         match group:
             case 'skier:finishline':
-                if server.game_finish == None:
-                    server.game_finish = GameFinish()
-                    game_world.add_object(server.game_finish, 4)
-                    game_world.add_collision_pair('skier:finishline', server.skier, None)
+                server.game_finish.state = 'draw'
 
             case 'skier:obstacle':
                 obstacle_type = server.obstacle.obstacle_type
-                server.score.obstacle_collision(server.obstacle.obstacle_type)
                 if obstacle_type in ["tree", "rock"]:
                     self.state_machine.handle_event(('TIME_OUT', 0))

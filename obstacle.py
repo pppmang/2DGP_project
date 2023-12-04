@@ -32,7 +32,7 @@ class Flag:
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                server.score.obstacle_collision("flag")
+                server.score.obstacle_collision(obstacle_type="flag")
 
 
 class Tree:
@@ -62,7 +62,7 @@ class Tree:
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                server.score.obstacle_collision("tree")
+                server.score.obstacle_collision(obstacle_type="tree")
                 server.skier.state_machine.handle_event(('TIME_OUT', 0))
 
 
@@ -93,7 +93,7 @@ class Rock:
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                server.score.obstacle_collision("rock")
+                server.score.obstacle_collision(obstacle_type="rock")
                 server.skier.state_machine.handle_event(('TIME_OUT', 0))
 
 
@@ -141,8 +141,10 @@ class Obstacle:
 
     def get_bb(self):
         for obstacle in self.obstacles:
-            obstacle.get_bb()
+            return obstacle.get_bb()
 
     def handle_collision(self, group, other):
-        for obstacle in self.obstacles:
-            obstacle.handle_collision()
+        match group:
+            case 'skier:obstacle':
+                for obstacle in self.obstacles:
+                    obstacle.handle_collision()

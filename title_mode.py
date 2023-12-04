@@ -1,5 +1,6 @@
 import game_framework
-from pico2d import clear_canvas, update_canvas, get_events, SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE
+from pico2d import clear_canvas, update_canvas, get_events, SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, get_canvas_width, \
+    get_canvas_height, resize_canvas
 
 import infinity_mode
 import normal_mode
@@ -15,6 +16,13 @@ def init():
 
 def draw():
     clear_canvas()
+    # 현재 캔버스 크기를 확인
+    current_canvas_width, current_canvas_height = get_canvas_width(), get_canvas_height()
+
+    # 캔버스 크기가 변경되어야 하는 경우에만 크기 조절
+    if current_canvas_width != 1500 or current_canvas_height != 840:
+        resize_canvas(1500, 840)
+
     start_menu.draw()
     update_canvas()
 

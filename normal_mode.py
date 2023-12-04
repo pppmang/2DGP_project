@@ -7,7 +7,7 @@ import title_mode
 
 from skier import Skier
 from score import Score
-from background import NormalMode, FinishLine, ModeSelect
+from background import NormalMode, FinishLine, ModeSelect, GameFinish
 from obstacle import Obstacle
 
 from background import GameBackground as Background
@@ -15,7 +15,6 @@ from background import GameBackground as Background
 
 def handle_events():
     mode_select = ModeSelect()
-    current_mode = None
 
     events = get_events()
     for event in events:
@@ -23,14 +22,9 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-        elif server.game_finish.handle_event(event):
-            if server.game_finish.selected_button == 'P L A Y A G A I N':
-                game_framework.change_mode(current_mode)
-            elif server.game_finish.selected_button == 'H   O   M   E':
-                game_framework.change_mode(title_mode)
-
         else:
             server.skier.handle_event(event)
+            server.game_finish.handle_event(event)
 
 
 def init():
@@ -53,6 +47,10 @@ def init():
 
     server.score = Score()
     game_world.add_object(server.score, 3)
+
+    server.game_finish = GameFinish()
+    game_world.add_object(server.game_finish, 4)
+    game_world.add_collision_pair('skier:finishline', server.skier, None)
 
 
 def finish():

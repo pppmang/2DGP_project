@@ -3,7 +3,7 @@ import game_framework
 from pico2d import *
 
 import server
-from background import ModeSelect
+from background import ModeSelect, GameFinish
 from obstacle import Obstacle
 from skier import Skier
 from score import Score
@@ -23,6 +23,7 @@ def handle_events():
             game_framework.quit()
         else:
             server.skier.handle_event(event)
+            server.game_finish.handle_event(event)
 
 
 def init():
@@ -39,7 +40,10 @@ def init():
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
     server.score = Score()
-    game_world.add_object(server.score, 2)
+    game_world.add_object(server.score, 3)
+
+    server.game_finish = GameFinish()
+    game_world.add_object(server.game_finish, 4)
 
 
 def finish():
