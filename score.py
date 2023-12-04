@@ -5,7 +5,10 @@ from pico2d import *
 class Score:
     def __init__(self):
         self.score = 0
-        self.font = load_font('impact.ttf', 36)
+        self.final_score = 0
+        self.font_score = load_font('impact.ttf', 36)
+        self.font_final = load_font('impact.ttf', 150)
+
 
     def increase_distance(self, value):
         if value % 5 == 0:
@@ -31,7 +34,13 @@ class Score:
 
     def draw(self):
         score_text = f"{self.score}"
-        self.font.draw(500, 1400, score_text, (0, 0, 0))
+        self.font_score.draw(500, 1400, score_text, (0, 0, 0))
 
+    def set_final_score(self):
+        self.final_score = self.score
+
+    def draw_final_score(self):
+        final_score_text = f"{self.final_score}"  # 최종 점수를 출력
+        self.font_final.draw(410, 1150, final_score_text, (255, 255, 255))
     def get_score(self):
         return self.score

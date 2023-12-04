@@ -63,7 +63,6 @@ class Tree:
         match group:
             case 'skier:obstacle':
                 server.score.obstacle_collision(obstacle_type="tree")
-                server.skier.state_machine.handle_event(('TIME_OUT', 0))
 
 
 class Rock:
@@ -94,7 +93,6 @@ class Rock:
         match group:
             case 'skier:obstacle':
                 server.score.obstacle_collision(obstacle_type="rock")
-                server.skier.state_machine.handle_event(('TIME_OUT', 0))
 
 
 class Obstacle:
@@ -107,12 +105,12 @@ class Obstacle:
             obstacle.draw()
 
     def generate_obstacle(self):
-        self.obstacle_type = random.choice(["flag", "tree", "rock"])
-        if self.obstacle_type == "flag":
+        obstacle_type = random.choice(["flag", "tree", "rock"])
+        if obstacle_type == "flag":
             return Flag()
-        elif self.obstacle_type == "tree":
+        elif obstacle_type == "tree":
             return Tree()
-        elif self.obstacle_type == "rock":
+        elif obstacle_type == "rock":
             return Rock()
 
     def update(self):

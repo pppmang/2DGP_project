@@ -182,6 +182,9 @@ class Skier:
         # 스키어 속도 증가
         self.speed += RUN_SPEED_PPS
 
+    def set_speed(self, speed):
+        self.speed = speed
+
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 

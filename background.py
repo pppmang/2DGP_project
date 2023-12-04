@@ -2,10 +2,9 @@ from pico2d import *
 
 import game_framework
 import title_mode
-from score import Score
+from game_world import collide
 import server
 from obstacle import Obstacle
-from state import RUN_SPEED_PPS
 
 
 class GameBackground:
@@ -14,7 +13,7 @@ class GameBackground:
         self.obstacle = Obstacle()
         self.y = 0
         self.bgm = load_music('background_music.mp3')
-        self.bgm.set_volume(30)
+        self.bgm.set_volume(25)
         self.bgm.repeat_play()
 
     def draw(self):
@@ -26,8 +25,8 @@ class GameBackground:
 
     def update(self):
         server.score.increase_distance(self.y)
-
         self.y -= server.skier.speed * game_framework.frame_time
+
         if self.y < 0:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
             self.y = 1500
 
@@ -40,35 +39,49 @@ class GameBackground:
         for obstacle in self.obstacle.obstacles:
             obstacle.handle_collision()
 
+    def stop_music(self):
+        self.bgm.stop()
+
+
+class Life:
+    def __init__(self, x, y):
+        self.image = load_image('life.png')
+        self.x, self.y = x, y
+
+    def draw(self):
+        self.image.draw(self.x, self.y)
+
+    def update(self):
+        pass
 
 
 class InfinityMode:
     def __init__(self):
-        self.background = GameBackground()
-        self.life_image = load_image('life.png')
+        self.life_images = [Life(50 + i * 80, 1450) for i in range(3)]
         self.life_count = 3  # 초기 플레이어 생명 개수
 
     def draw(self):
-        self.background.draw()
+        server.skier.draw()  # Skier 그리기
 
-        for i in range(self.life_count):
-            self.life_image.clip_draw(0, 0, 100, 122, 50 + i * 80, 1450)
+        for life in self.life_images[:self.life_count]:
+            life.draw()
 
     def update(self):
-        self.background.update()
+        server.skier.update()  # Skier 업데이트
 
-    def check_collision(self, obstacle1, obstacle2):
-        self.background.obstacle.check_collision(obstacle1, obstacle2)
+    def handle_event(self, event):
+        server.skier.handle_event(event)  # Skier 이벤트 처리
 
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                for obstacle in self.background.obstacle.obstacles:
+                for obstacle in server.background.obstacle.obstacles:
                     obstacle.handle_collision()
-                    obstacle_type = server.obstacle.obstacle_type
+                    obstacle_type = server.background.obstacle.obstacle_type
                     if obstacle_type in ['rock', 'tree']:
                         self.life_count -= 1
                         if self.life_count <= 0:
+                            self.life_count = 0
                             server.game_finish()
 
 
@@ -131,12 +144,14 @@ class GameFinish:
     def __init__(self, x=500, y=1000):
         self.frame_height = 254
         self.frame_width = 505
-        # server.skier.speed = 0
         self.mode_select = ModeSelect()
         self.finish_UI = load_image('game_pop_up_UI.png')
         self.button_UI = load_image('game_button_UI.png')
         self.x, self.y = x, y
-        self.font = load_font('impact.TTF', 55)
+        self.font_size_main = 55  # 기존 텍스트의 크기
+        self.font_size_score = 150  # 점수 텍스트의 크기
+        self.font_main = load_font('impact.TTF', self.font_size_main)
+        self.font_score = load_font('impact.TTF', self.font_size_score)
         self.state = 'hide'
 
         self.menu_buttons = [
@@ -157,7 +172,13 @@ class GameFinish:
             for button in self.menu_buttons:
                 self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, button['y'], draw_width,
                                          draw_height)
-                self.font.draw(button['x'], button['y'], button['button'], (255, 255, 255))
+                self.font_main.draw(button['x'], button['y'], button['button'], (255, 255, 255))
+
+            if collide(server.finish_line, server.skier):
+                server.score.set_final_score()  # 최종 점수를 설정
+
+            server.score.draw_final_score()
+
     def handle_event(self, event):
         if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             for button in self.menu_buttons:
@@ -166,23 +187,14 @@ class GameFinish:
                 if button_x - 570 < event.x < button_x - 120 and button_y + 430 < event.y < button_y + 540:
                     self.selected_button = button['button']
 
+                if self.selected_button is not None:
+                    self.state = 'hide'
                     # 메뉴 선택 후 해당 화면으로 전환
                     if self.selected_button == 'P L A Y A G A I N':
-                        # game_framework.change_mode(normal_mode)
-                        pass
+                        game_framework.restart_current_mode()
                     elif self.selected_button == 'H      O        M      E':
                         game_framework.change_mode(title_mode)
-
-
-# def handle_events():
-#     events = get_events()
-#     for event in events:
-#         if event.type == SDL_QUIT:
-#             game_framework.quit()
-#         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-#             game_framework.quit()
-#         else:
-#             server.skier.handle_event(event)
+                        server.background.stop_music()  # 음악 중지 추가
 
 
 class NormalMode:
