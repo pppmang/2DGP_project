@@ -3,7 +3,6 @@ from time import time
 from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp
 
 import game_framework
-import game_world
 import server
 from state import FRAMES_PER_ACTION, ACTION_PER_TIME, RUN_SPEED_PPS
 from background import GameFinish
@@ -31,11 +30,13 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
+
+
 class Idle:
     @staticmethod
     def enter(skier, e):
         skier.action = 0
-        skier.speed = skier.speed
+        skier.speed = 0
         skier.dir = 0
 
     @staticmethod
@@ -56,7 +57,7 @@ class SkiRight:
     @staticmethod
     def enter(skier, e):
         skier.action = 1
-        skier.speed = skier.speed
+        skier.speed = RUN_SPEED_PPS
         skier.dir = 1
 
     @staticmethod
@@ -81,7 +82,7 @@ class SkiLeft:
     @staticmethod
     def enter(skier, e):
         skier.action = 1
-        skier.speed = skier.speed
+        skier.speed = RUN_SPEED_PPS
         skier.dir = -1
 
     @staticmethod
@@ -172,6 +173,8 @@ class Skier:
 
     def update(self):
         self.state_machine.update()
+        self.score.increase_distance(self.y)
+        self.score.increase_score(self.y)
 
         # 10초마다 속도를 증가
         if time() > self.acceleration_time:
@@ -195,13 +198,10 @@ class Skier:
     def handle_collision(self, group, other):
         match group:
             case 'skier:finishline':
-                if server.game_finish == None:
-                    server.game_finish = GameFinish()
-                    game_world.add_object(server.game_finish, 4)
-                    game_world.add_collision_pair('skier:finishline', server.skier, None)
+                return GameFinish()
 
             case 'skier:obstacle':
                 obstacle_type = server.obstacle.obstacle_type
-                server.score.obstacle_collision(server.obstacle.obstacle_type)
+                self.score.obstacle_collision(server.obstacle.obstacle_type)
                 if obstacle_type in ["tree", "rock"]:
-                    self.state_machine.handle_event(('TIME_OUT', 0))
+                    self.state_machine.handle_event(('COLLISION', None))

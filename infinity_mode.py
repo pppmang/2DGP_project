@@ -26,23 +26,20 @@ def handle_events():
 
 
 def init():
-    global obstacle
-
     server.background = Background()
     game_world.add_object(server.background, 0)
 
     server.skier = Skier()
     game_world.add_object(server.skier, 2)
-    game_world.add_collision_pair('skier:finish_line', server.skier, None)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
-    obstacles = Obstacle()
-    for obstacle in obstacles.obstacles:
+    server.obstacle = Obstacle()
+    for obstacle in server.obstacle.obstacles:
         game_world.add_object(obstacle, 1)
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
-    score = Score()
-    game_world.add_object(score, 2)
+    server.score = Score()
+    game_world.add_object(server.score, 2)
 
 
 def finish():

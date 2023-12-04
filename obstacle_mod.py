@@ -1,8 +1,10 @@
+
 import random
 from pico2d import load_image, draw_rectangle
 
 import game_framework
 import server
+from state import RUN_SPEED_PPS
 
 
 class Flag:
@@ -24,15 +26,10 @@ class Flag:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        self.y += server.skier.speed * game_framework.frame_time
+        self.y += server.skier.speed
 
     def get_bb(self):
         return self.x - 20, self.y - 30, self.x + 20, self.y + 30
-
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle':
-                server.score.obstacle_collision("flag")
 
 
 class Tree:
@@ -59,12 +56,6 @@ class Tree:
     def get_bb(self):
         return self.x - 50, self.y - 60, self.x + 50, self.y + 60
 
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle':
-                server.score.obstacle_collision("tree")
-                server.skier.state_machine.handle_event(('TIME_OUT', 0))
-
 
 class Rock:
     def __init__(self):
@@ -90,33 +81,26 @@ class Rock:
     def get_bb(self):
         return self.x - 50, self.y - 30, self.x + 50, self.y + 30
 
-    def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle':
-                server.score.obstacle_collision("rock")
-                server.skier.state_machine.handle_event(('TIME_OUT', 0))
-
 
 class Obstacle:
     def __init__(self):
         self.obstacles = []
-        self.obstacle_type = None
 
     def draw(self):
         for obstacle in self.obstacles:
             obstacle.draw()
 
     def generate_obstacle(self):
-        self.obstacle_type = random.choice(["flag", "tree", "rock"])
-        if self.obstacle_type == "flag":
+        obstacle_type = random.choice(["flag", "tree", "rock"])
+        if obstacle_type == "flag":
             return Flag()
-        elif self.obstacle_type == "tree":
+        elif obstacle_type == "tree":
             return Tree()
-        elif self.obstacle_type == "rock":
+        elif obstacle_type == "rock":
             return Rock()
 
     def update(self):
-        if random.random() < 0.005:
+        if random.random() < 0.003:
             new_obstacle = self.generate_obstacle()
             # 새로운 장애물이 이미 생성된 장애물들과 겹치지 않도록 확인
             while any(self.check_collision(new_obstacle, existing_obstacle) for existing_obstacle in self.obstacles):
@@ -138,11 +122,3 @@ class Obstacle:
                 obstacle1.y + obstacle1.frame_height > obstacle2.y):
             return True
         return False
-
-    def get_bb(self):
-        for obstacle in self.obstacles:
-            obstacle.get_bb()
-
-    def handle_collision(self, group, other):
-        for obstacle in self.obstacles:
-            obstacle.handle_collision()

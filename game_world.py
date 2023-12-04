@@ -1,4 +1,4 @@
-objects = [[] for _ in range(4)]
+objects = [[] for _ in range(5)]
 collision_pairs = {}
 
 def add_object(o, depth = 0):
