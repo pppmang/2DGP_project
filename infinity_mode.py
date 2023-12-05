@@ -27,6 +27,9 @@ def handle_events():
 
 
 def init():
+    server.mode = 'infinity_mode'
+    current_mode = server.mode
+
     server.infinity = Background()
     game_world.add_object(server.infinity, 0)
 
@@ -34,10 +37,10 @@ def init():
     game_world.add_object(server.skier, 2)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
-    server.obstacle = [ Obstacle() for _ in range(100) ]
-    for obstacle in server.obstacle:
+    obstacles = [ Obstacle() for _ in range(130) ]
+    for obstacle in obstacles:
         game_world.add_object(obstacle, 3)
-        game_world.add_collision_pair('skier:obstacle', None, obstacle)
+        game_world.add_collision_pair('skier:obstacle', None, obstacle.instance)
 
     server.score = Score()
     game_world.add_object(server.score, 3)

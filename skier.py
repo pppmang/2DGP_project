@@ -1,3 +1,4 @@
+import logging
 import random
 from time import time
 from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp, load_wav
@@ -119,18 +120,17 @@ class BlackOut:
         skier.action = 3
         skier.speed = 0
         skier.frame = random.choice([0, 1])
-        skier.blackout_timer = time() + 3
+        skier.blackout_timer = time() + 4
         skier.skier_ski_sound.set_volume(0)
-        skier.skier_turn_sound.set_volume(0)
+
     @staticmethod
     def exit(skier, e):
         pass
 
     @staticmethod
     def do(skier):
-        if time() > skier.blackout_timer:
-            skier.state_machine.handle_event(('TIME_OUT', None))  # 타이머 종료 시 Idle 상태로 전환
-
+        if time() > skier.blackout_timer - 1:
+            skier.state_machine.handle_event(('TIME_OUT', None))
     @staticmethod
     def draw(skier):
         skier.image.clip_draw(skier.frame * skier.frame_width, skier.action * skier.frame_height, skier.frame_width,
@@ -180,7 +180,6 @@ class Skier:
         self.image = load_image('skier.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.score = Score()
         self.acceleration_time = time() + 10  # 초기 가속 시간 설정
 
     def update(self):
@@ -203,7 +202,7 @@ class Skier:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        # draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 25, self.y - 28, self.x + 25, self.y + 28
@@ -214,26 +213,23 @@ class Skier:
                 server.game_finish.state = 'draw'
 
             case 'skier:obstacle':
-                for obstacle in server.obstacle:
-                    obstacle_type = obstacle.instance.obstacle_type
-                    if obstacle_type in ["tree", "rock"]:
-                        self.state_machine.handle_event(('TIME_OUT', 0))
-                        game_world.remove_collision_object(obstacle.instance)
-                        if hasattr(server.infinity, 'life_count') and server.infinity.life_count > 0:
-                            server.infinity.remove_life_image()
-                        if hasattr(server.infinity, 'life_count') and server.infinity.life_count <= 0:
-                            server.infinity.life_count = 0
-                            server.game_finish()
-                    elif obstacle_type == "flag":
-                        obstacle.instance.handle_collision('skier:obstacle', server.skier)
-                        game_world.remove_collision_object(obstacle.instance)
+                # Obstacle 클래스의 인스턴스에서 obstacle_type 속성을 가져오기
+                obstacle = other.instance
+                obstacle_type = obstacle.obstacle_type
 
-            # case 'skier:obstacle2':
-            #     for obstacle in server.obstacle.generate_obstacle().obstacles:
-            #         obstacle_type = obstacle.obstacle_type
-            #         if obstacle_type in ["tree", "rock"]:
-            #             self.state_machine.handle_event(('TIME_OUT', 0))
-            #             game_world.remove_collision_object(obstacle)
-            #         else:
-            #             server.obstacle.handle_collision('skier:obstacle', obstacle)
-            #             game_world.remove_collision_object(obstacle)
+                if obstacle_type in ["tree", "rock"]:
+                    self.state_machine.handle_event(('TIME_OUT', 0))
+
+                    # 충돌 객체로 등록되어 있는지 확인 후 제거
+                    if game_world.is_collision_object(obstacle):
+                        game_world.remove_collision_object(obstacle)
+
+                    if hasattr(server.infinity, 'life_count') and server.infinity.life_count > 0:
+                        server.infinity.remove_life_image()
+
+                    elif hasattr(server.infinity, 'life_count') and server.infinity.life_count == 0:
+                        server.infinity.life_count = 0
+                        server.game_finish.state = 'draw'
+
+                elif obstacle_type == "flag":
+                    pass

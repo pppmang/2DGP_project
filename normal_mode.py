@@ -9,7 +9,7 @@ import title_mode
 
 from skier import Skier
 from score import Score
-from background import NormalMode, FinishLine, ModeSelect, GameFinish
+from background import FinishLine, ModeSelect, GameFinish
 from obstacle import Obstacle
 
 from background import GameBackground as Background
@@ -30,6 +30,9 @@ def handle_events():
 
 
 def init():
+    server.mode = 'normal_mode'
+    current_mode = server.mode
+
     server.background = Background()
     game_world.add_object(server.background, 0)
 
@@ -37,10 +40,9 @@ def init():
     game_world.add_object(server.skier, 2)
     game_world.add_collision_pair('skier:finishline', server.skier, None)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
-    # game_world.add_collision_pair('skier:obstacle2', server.skier, None)
 
-    server.obstacle = [ Obstacle() for _ in range(40) ]
-    for obstacle in server.obstacle:
+    obstacles = [ Obstacle() for _ in range(50) ]
+    for obstacle in obstacles:
         game_world.add_object(obstacle, 3)
         game_world.add_collision_pair('skier:obstacle', None, obstacle.instance)
 

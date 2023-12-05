@@ -69,14 +69,12 @@ class InfinityMode:
 
     def draw(self):
         self.background.draw()
-        server.skier.draw()  # Skier 그리기
 
         for life in self.lives[:self.life_count]:
             life.draw()
 
     def update(self):
         self.background.update()
-        server.skier.update()  # Skier 업데이트
 
     def remove_life_image(self):
         if self.life_count > 0:
@@ -87,10 +85,19 @@ class InfinityMode:
                     game_world.remove_object(removed_life)
 
     def handle_event(self, event):
-        server.skier.handle_event(event)  # Skier 이벤트 처리
+        pass
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'skier:obstacle':
+            obstacle = other.instance
+            obstacle_type = obstacle.obstacle_type
+
+            if obstacle_type in ["tree", "rock"]:
+                if self.life_count > 0:
+                    self.remove_life_image()
+                else:
+                    # 더 이상 남은 라이프가 없으면 게임을 종료 상태로 변경
+                    server.game_finish.state = 'draw'
 
 class ModeSelect:
     image = None
@@ -138,6 +145,7 @@ class StartMenu:
         self.mode_select = ModeSelect()
         self.font = load_font('InkFree.TTF', 120)
 
+
     def draw(self):
         self.image.draw(750, 420)
         self.mode_select.draw()
@@ -181,8 +189,11 @@ class GameFinish:
                                          draw_height)
                 self.font_main.draw(button['x'], button['y'], button['button'], (255, 255, 255))
 
-            if collide(server.finish_line, server.skier):
+            if server.mode == 'normal_mode' and collide(server.finish_line, server.skier):
                 server.score.set_final_score()  # 최종 점수를 설정
+
+            elif server.mode == 'infinity_mode':
+                server.score.set_final_score()
 
             server.score.draw_final_score()
 

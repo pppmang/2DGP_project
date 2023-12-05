@@ -1,3 +1,5 @@
+from obstacle import *
+
 objects = [[] for _ in range(5)]
 collision_pairs = {}
 
@@ -21,7 +23,17 @@ def render():
             if hasattr(o, 'draw'):
                 o.draw()
 
-
+def is_collision_object(o):
+    for layer in objects:
+        for obj in layer:
+            if hasattr(o, 'obstacle_type') and hasattr(obj, 'obstacle_type'):
+                # 모두 Obstacle 클래스에 obstacle_type 속성이 있는 경우
+                if o.obstacle_type == obj.obstacle_type:
+                    return True
+            elif o == obj:
+                # 기타 객체들은 직접 비교
+                return True
+    return False
 def remove_collision_object(o):
     for pairs in collision_pairs.values():
         if o in pairs[0]:
@@ -38,7 +50,7 @@ def remove_object(o):
             del o
             print("Object removed")
             return
-        raise ValueError('Cannot delete non-existing object')
+    raise ValueError('Cannot delete non-existing object')
 
 def clear():
     for layer in objects:
