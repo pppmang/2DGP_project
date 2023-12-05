@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import game_world
+from skier import Idle
 import title_mode
 from game_world import collide
 import server
@@ -36,14 +37,6 @@ class GameBackground:
 
     def handle_collision(self, group, other):
         pass
-        # match group:
-        #     case 'skier:obstacle':
-        #         for obstacle in self.obstacle.obstacles:
-        #             obstacle_type = obstacle.obstacle_type
-        #             # if obstacle_type in ["tree", "rock"]:
-        #             print('collision')
-        #             server.skier.state_machine.handle_event(('TIME_OUT', 0))
-        #             self.obstacle.handle_collision(group, other)
 
 
 class Life:
@@ -99,6 +92,7 @@ class InfinityMode:
                     # 더 이상 남은 라이프가 없으면 게임을 종료 상태로 변경
                     server.game_finish.state = 'draw'
 
+
 class ModeSelect:
     image = None
 
@@ -128,9 +122,9 @@ class ModeSelect:
         if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             for button in self.mode_buttons:
                 x, y = button['x'], button['y']
-
                 if x - 30 < event.x < x + 250 and y + 570 < event.y < y + 690:
                     self.selected_mode = button['mode']
+                    StartMenu.start_menu_sound.set_volume(0)
 
                     # 모드 선택 후 해당 모드로 화면 전환
                     if self.selected_mode == 'NORMAL':
@@ -138,18 +132,24 @@ class ModeSelect:
                     elif self.selected_mode == 'INFINITY':
                         return InfinityMode()
 
-
 class StartMenu:
+    start_menu_sound = None
+
     def __init__(self):
         self.image = load_image('start_menu_background.png')
         self.mode_select = ModeSelect()
-        self.font = load_font('InkFree.TTF', 120)
-
+        self.font = load_font('InkFree.TTF', 200)
+        if not StartMenu.start_menu_sound:
+            StartMenu.start_menu_sound = load_wav('startmenu_music.wav')
+            StartMenu.start_menu_sound.set_volume(80)
+            StartMenu.start_menu_sound.play()
 
     def draw(self):
         self.image.draw(750, 420)
         self.mode_select.draw()
-        self.font.draw(800, 400, 'The SKI', (255, 255, 255))
+        self.font.draw(590, 610, 'The SKI', (51, 0, 153))
+        self.font.draw(600, 600, 'The SKI', (153, 204, 255))
+        self.font.draw(610, 590, 'The SKI', (255, 255, 255))
 
     def update(self):
         pass
@@ -213,6 +213,7 @@ class GameFinish:
                     elif self.selected_button == 'H      O        M      E':
                         game_framework.change_mode(title_mode)
                         server.background.stop_music()  # 음악 중지 추가
+                        StartMenu.start_menu_sound.set_volume(80)
 
 
 class NormalMode:

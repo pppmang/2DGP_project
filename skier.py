@@ -8,9 +8,6 @@ import game_world
 import server
 from obstacle import Obstacle
 from state import FRAMES_PER_ACTION, ACTION_PER_TIME, RUN_SPEED_PPS
-from background import GameFinish
-
-from score import Score
 
 
 def right_down(e):
@@ -34,14 +31,23 @@ def time_out(e):
 
 
 class Idle:
+    skier_ski_sound = None  # 클래스 변수로 소리를 저장할 변수 추가
+
+    @classmethod
+    def load_sound(cls):
+        if cls.skier_ski_sound is None:
+            cls.skier_ski_sound = load_wav('skiing.wav')
+            cls.skier_ski_sound.set_volume(100)
     @staticmethod
     def enter(skier, e):
         skier.action = 0
         skier.speed = skier.speed
         skier.dir = 0
-        skier.skier_ski_sound = load_wav('skiing.wav')
-        skier.skier_ski_sound.set_volume(100)  # 볼륨 조절
-        skier.skier_ski_sound.play()
+
+        if not server.game_finish:  # game_finish 상태가 아닌 경우에만 소리 재생
+            Idle.load_sound()  # 소리 로드
+            skier.skier_ski_sound = Idle.skier_ski_sound
+            skier.skier_ski_sound.repeat_play()
 
     @staticmethod
     def exit(skier, e):
@@ -125,8 +131,9 @@ class BlackOut:
 
     @staticmethod
     def exit(skier, e):
-        pass
-
+        if not server.game_finish:  # game_finish 상태가 아닌 경우에만 소리 재생
+            # BlackOut 상태에서 나갈 때 볼륨을 원래대로 설정
+            skier.skier_ski_sound.set_volume(100)
     @staticmethod
     def do(skier):
         if time() > skier.blackout_timer - 1:
