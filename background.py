@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import game_world
 import title_mode
 from game_world import collide
 import server
@@ -59,17 +60,31 @@ class Life:
 
 class InfinityMode:
     def __init__(self):
-        self.life_images = [Life(50 + i * 80, 1450) for i in range(3)]
+        self.background = GameBackground()
+        self.life1 = Life(50, 1450)
+        self.life2 = Life(130, 1450)
+        self.life3 = Life(210, 1450)
+        self.lives = [self.life1, self.life2, self.life3]
         self.life_count = 3  # 초기 플레이어 생명 개수
 
     def draw(self):
+        self.background.draw()
         server.skier.draw()  # Skier 그리기
 
-        for life in self.life_images[:self.life_count]:
+        for life in self.lives[:self.life_count]:
             life.draw()
 
     def update(self):
+        self.background.update()
         server.skier.update()  # Skier 업데이트
+
+    def remove_life_image(self):
+        if self.life_count > 0:
+            self.life_count -= 1
+            if self.life_count > 0:
+                removed_life = self.lives.pop()
+                if removed_life in game_world.objects[3]:
+                    game_world.remove_object(removed_life)
 
     def handle_event(self, event):
         server.skier.handle_event(event)  # Skier 이벤트 처리
@@ -77,14 +92,8 @@ class InfinityMode:
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                for obstacle in server.background.obstacle.obstacles:
-                    obstacle.handle_collision()
-                    obstacle_type = server.background.obstacle.obstacle_type
-                    if obstacle_type in ['rock', 'tree']:
-                        self.life_count -= 1
-                        if self.life_count <= 0:
-                            self.life_count = 0
-                            server.game_finish()
+                for obstacle in server.obstacle.obstacles:
+                    obstacle_type = server.obstacle.obstacle_type
 
 
 class ModeSelect:

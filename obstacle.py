@@ -13,7 +13,7 @@ class Flag:
         self.frame_x = random.randint(0, 9) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(-10000, 0)
+        self.y = random.randint(0, 50)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -35,6 +35,7 @@ class Flag:
             case 'skier:obstacle':
                 server.score.obstacle_collision(obstacle_type="flag")
 
+
 class Tree:
     def __init__(self, obstacle_type):
         self.image = load_image('tree.png')
@@ -43,7 +44,7 @@ class Tree:
         self.frame_x = random.randint(0, 2) * self.frame_width
         self.frame_y = random.randint(0, 1) * self.frame_height
         self.x = random.randint(50, 950)
-        self.y = random.randint(-10000, 0)
+        self.y = random.randint(0, 50)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -74,7 +75,7 @@ class Rock:
         self.frame_x = random.randint(0, 3) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(-10000, 0)
+        self.y = random.randint(0, 50)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -100,27 +101,24 @@ class Rock:
 class Obstacle:
     def __init__(self):
         self.obstacles = []
-        self.num_obstacles = random.randint(50, 100)
         self.generate_obstacle()
 
     def draw(self):
         for obstacle in self.obstacles:
             obstacle.draw()
 
-
     def generate_obstacle(self):
-        for _ in range(self.num_obstacles):
-            new_obstacle = None
-            obstacle_type = random.choice(["flag", "tree", "rock"])
-            if obstacle_type == "flag":
-                new_obstacle = Flag("flag")
-            elif obstacle_type == "tree":
-                new_obstacle = Tree("tree")
-            elif obstacle_type == "rock":
-                new_obstacle = Rock("rock")
+        new_obstacle = None
+        obstacle_type = random.choice(["flag", "tree", "rock"])
+        if obstacle_type == "flag":
+            new_obstacle = Flag("flag")
+        elif obstacle_type == "tree":
+            new_obstacle = Tree("tree")
+        elif obstacle_type == "rock":
+            new_obstacle = Rock("rock")
 
-            # 생성한 장애물을 리스트에 추가
-            self.obstacles.append(new_obstacle)
+        # 생성한 장애물을 리스트에 추가
+        self.obstacles.append(new_obstacle)
 
         # 생성 후 장애물 개수 출력
         print("생성 후:", len(self.obstacles))
@@ -158,5 +156,6 @@ class Obstacle:
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
+                print("Handling collision")
                 for obstacle in self.obstacles:
                     obstacle.handle_collision('skier:obstacle', server.skier)

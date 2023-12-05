@@ -3,12 +3,12 @@ import game_framework
 from pico2d import *
 
 import server
-from background import ModeSelect, GameFinish, InfinityMode
+from background import ModeSelect, GameFinish
 from obstacle import Obstacle
 from skier import Skier
 from score import Score
 
-from background import GameBackground as Background
+from background import InfinityMode as Background
 
 
 def handle_events():
@@ -27,13 +27,8 @@ def handle_events():
 
 
 def init():
-    server.background = Background()
-    game_world.add_object(server.background, 0)
-
-    infinity_mode = InfinityMode()
-    life_images = infinity_mode.life_images
-    for life in life_images:
-        game_world.add_object(life, 2)
+    server.infinity = Background()
+    game_world.add_object(server.infinity, 0)
 
     server.skier = Skier()
     game_world.add_object(server.skier, 2)

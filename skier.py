@@ -217,7 +217,12 @@ class Skier:
                     if obstacle_type in ["tree", "rock"]:
                         self.state_machine.handle_event(('TIME_OUT', 0))
                         game_world.remove_collision_object(obstacle)
-                    else:
+                        if server.infinity.life_count > 0:
+                            server.infinity.remove_life_image()
+                        if server.infinity.life_count <= 0:
+                            server.infinity.life_count = 0
+                            server.game_finish()
+                    elif obstacle_type in ["flag"]:
                         server.obstacle.handle_collision('skier:obstacle', obstacle)
                         game_world.remove_collision_object(obstacle)
 
