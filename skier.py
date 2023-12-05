@@ -5,6 +5,7 @@ from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, dr
 import game_framework
 import game_world
 import server
+from obstacle import Obstacle
 from state import FRAMES_PER_ACTION, ACTION_PER_TIME, RUN_SPEED_PPS
 from background import GameFinish
 
@@ -31,10 +32,10 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
-skier_turn_sound = load_wav('ski_change_dir.wav')
-skier_ski_sound = load_wav('skiing.wav')
-skier_turn_sound.set_volume(25)
-skier_ski_sound.set_volume(25)
+# skier_turn_sound = load_wav('ski_change_dir.wav')
+# skier_ski_sound = load_wav('skiing.wav')
+# skier_turn_sound.set_volume(25)
+# skier_ski_sound.set_volume(25)
 
 
 class Idle:
@@ -43,7 +44,7 @@ class Idle:
         skier.action = 0
         skier.speed = skier.speed
         skier.dir = 0
-        skier.skier_ski_sound.play()
+        # skier.skier_ski_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -65,7 +66,7 @@ class SkiRight:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = 1
-        skier.skier_turn_sound.play()
+        # skier.skier_turn_sound.play()
 
 
     @staticmethod
@@ -92,7 +93,7 @@ class SkiLeft:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = -1
-        skier.skier_turn_sound.play()
+        # skier.skier_turn_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -211,6 +212,21 @@ class Skier:
                 server.game_finish.state = 'draw'
 
             case 'skier:obstacle':
-                obstacle_type = server.obstacle.obstacle_type
-                if obstacle_type in ["tree", "rock"]:
-                    self.state_machine.handle_event(('TIME_OUT', 0))
+                for obstacle in server.obstacle.obstacles:
+                    obstacle_type = obstacle.obstacle_type
+                    if obstacle_type in ["tree", "rock"]:
+                        self.state_machine.handle_event(('TIME_OUT', 0))
+                        game_world.remove_collision_object(obstacle)
+                    else:
+                        server.obstacle.handle_collision('skier:obstacle', obstacle)
+                        game_world.remove_collision_object(obstacle)
+
+            # case 'skier:obstacle2':
+            #     for obstacle in server.obstacle.generate_obstacle().obstacles:
+            #         obstacle_type = obstacle.obstacle_type
+            #         if obstacle_type in ["tree", "rock"]:
+            #             self.state_machine.handle_event(('TIME_OUT', 0))
+            #             game_world.remove_collision_object(obstacle)
+            #         else:
+            #             server.obstacle.handle_collision('skier:obstacle', obstacle)
+            #             game_world.remove_collision_object(obstacle)

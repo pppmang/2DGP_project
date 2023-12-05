@@ -11,13 +11,16 @@ def add_objects(ol, depth = 0):
 def update():
     for layer in objects:
         for o in layer:
-            o.update()
+            if hasattr(o, 'update'):  # 객체가 update 메서드를 가지고 있는지 확인
+                o.update()
 
 
 def render():
     for layer in objects:
         for o in layer:
-            o.draw()
+            if hasattr(o, 'draw'):
+                o.draw()
+
 
 def remove_collision_object(o):
     for pairs in collision_pairs.values():

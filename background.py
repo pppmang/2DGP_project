@@ -4,13 +4,12 @@ import game_framework
 import title_mode
 from game_world import collide
 import server
-from obstacle import Obstacle
 
 
 class GameBackground:
     def __init__(self):
         self.image = load_image('game_background.png')
-        self.obstacle = Obstacle()
+        # self.obstacle = Obstacle()
         self.y = 0
         self.bgm = load_music('background_music.mp3')
         self.bgm.set_volume(25)
@@ -21,7 +20,7 @@ class GameBackground:
         self.image.draw(500, 750 - self.y)
         if self.y > 0:
             self.image.draw(500, 750 - self.y + image_height)
-        self.obstacle.draw()
+        # self.obstacle.draw()
 
     def update(self):
         server.score.increase_distance(self.y)
@@ -29,18 +28,21 @@ class GameBackground:
 
         if self.y < 0:  # 이미지가 화면 밖으로 나가면 다시 이미지가 위로 이동
             self.y = 1500
-
-        self.obstacle.update()
-
-    def check_collision(self, obstacle1, obstacle2):
-        self.obstacle.check_collision(obstacle1, obstacle2)
-
-    def handle_collision(self, group, other):
-        for obstacle in self.obstacle.obstacles:
-            obstacle.handle_collision()
+        # self.obstacle.update()
 
     def stop_music(self):
         self.bgm.stop()
+
+    def handle_collision(self, group, other):
+        pass
+        # match group:
+        #     case 'skier:obstacle':
+        #         for obstacle in self.obstacle.obstacles:
+        #             obstacle_type = obstacle.obstacle_type
+        #             # if obstacle_type in ["tree", "rock"]:
+        #             print('collision')
+        #             server.skier.state_machine.handle_event(('TIME_OUT', 0))
+        #             self.obstacle.handle_collision(group, other)
 
 
 class Life:

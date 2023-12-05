@@ -1,3 +1,5 @@
+import random
+
 from pico2d import *
 
 import game_framework
@@ -35,10 +37,11 @@ def init():
     game_world.add_object(server.skier, 2)
     game_world.add_collision_pair('skier:finishline', server.skier, None)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
+    # game_world.add_collision_pair('skier:obstacle2', server.skier, None)
 
     server.obstacle = Obstacle()
     for obstacle in server.obstacle.obstacles:
-        game_world.add_object(obstacle, 1)
+        game_world.add_object(obstacle, 3)
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
     server.finish_line = FinishLine()
@@ -71,6 +74,7 @@ def draw():
     # 캔버스 크기가 변경되어야 하는 경우에만 크기 조절
     if current_canvas_width != 1000 or current_canvas_height != 1500:
         resize_canvas(1000, 1500)
+
     game_world.render()
     update_canvas()
 

@@ -6,14 +6,15 @@ import server
 
 
 class Flag:
-    def __init__(self):
+    def __init__(self, obstacle_type):
         self.image = load_image('flag.png')
         self.frame_width = 70
         self.frame_height = 50
         self.frame_x = random.randint(0, 9) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
+        self.obstacle_type = obstacle_type
 
     def draw(self):
         # 깃발 크기 조정
@@ -34,16 +35,16 @@ class Flag:
             case 'skier:obstacle':
                 server.score.obstacle_collision(obstacle_type="flag")
 
-
 class Tree:
-    def __init__(self):
+    def __init__(self, obstacle_type):
         self.image = load_image('tree.png')
         self.frame_width = 200
         self.frame_height = 240
         self.frame_x = random.randint(0, 2) * self.frame_width
         self.frame_y = random.randint(0, 1) * self.frame_height
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
+        self.obstacle_type = obstacle_type
 
     def draw(self):
         # 나무 크기 조정
@@ -66,14 +67,15 @@ class Tree:
 
 
 class Rock:
-    def __init__(self):
+    def __init__(self, obstacle_type):
         self.image = load_image('rock.png')
         self.frame_width = 345
         self.frame_height = 344
         self.frame_x = random.randint(0, 3) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
+        self.obstacle_type = obstacle_type
 
     def draw(self):
         # 돌 크기 조정
@@ -98,29 +100,34 @@ class Rock:
 class Obstacle:
     def __init__(self):
         self.obstacles = []
-        self.obstacle_type = None
+        self.num_obstacles = random.randint(50, 100)
+        self.generate_obstacle()
 
     def draw(self):
         for obstacle in self.obstacles:
             obstacle.draw()
 
+
     def generate_obstacle(self):
-        obstacle_type = random.choice(["flag", "tree", "rock"])
-        if obstacle_type == "flag":
-            return Flag()
-        elif obstacle_type == "tree":
-            return Tree()
-        elif obstacle_type == "rock":
-            return Rock()
+        for _ in range(self.num_obstacles):
+            new_obstacle = None
+            obstacle_type = random.choice(["flag", "tree", "rock"])
+            if obstacle_type == "flag":
+                new_obstacle = Flag("flag")
+            elif obstacle_type == "tree":
+                new_obstacle = Tree("tree")
+            elif obstacle_type == "rock":
+                new_obstacle = Rock("rock")
+
+            # 생성한 장애물을 리스트에 추가
+            self.obstacles.append(new_obstacle)
+
+        # 생성 후 장애물 개수 출력
+        print("생성 후:", len(self.obstacles))
 
     def update(self):
-        if random.random() < 0.005:
-            new_obstacle = self.generate_obstacle()
-            # 새로운 장애물이 이미 생성된 장애물들과 겹치지 않도록 확인
-            while any(self.check_collision(new_obstacle, existing_obstacle) for existing_obstacle in self.obstacles):
-                new_obstacle = self.generate_obstacle()
-
-            self.obstacles.append(new_obstacle)
+        # 업데이트 전 장애물 개수 출력
+        print("업데이트 전:", len(self.obstacles))
 
         for obstacle in self.obstacles:
             obstacle.update()
@@ -128,21 +135,28 @@ class Obstacle:
             if obstacle.y < -100:
                 self.obstacles.remove(obstacle)
 
+        # 업데이트 후 장애물 개수 출력
+        print("업데이트 후:", len(self.obstacles))
+
     def check_collision(self, obstacle1, obstacle2):
         # 두 장애물 간의 충돌 여부 확인
-        if (obstacle1.x < obstacle2.x + obstacle2.frame_width and
-                obstacle1.x + obstacle1.frame_width > obstacle2.x and
-                obstacle1.y < obstacle2.y + obstacle2.frame_height and
-                obstacle1.y + obstacle1.frame_height > obstacle2.y):
-            return True
+        for o1 in obstacle1:
+            for o2 in obstacle2:
+                if (o1.x < o2.x + o2.frame_width and
+                        o1.x + o1.frame_width > o2.x and
+                        o1.y < o2.y + o2.frame_height and
+                        o1.y + o1.frame_height > o2.y):
+                    return True
         return False
 
     def get_bb(self):
+        bounding_boxes = []
         for obstacle in self.obstacles:
-            return obstacle.get_bb()
+            bounding_boxes.append(obstacle.get_bb())
+        return bounding_boxes
 
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
                 for obstacle in self.obstacles:
-                    obstacle.handle_collision()
+                    obstacle.handle_collision('skier:obstacle', server.skier)

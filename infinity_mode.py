@@ -41,7 +41,7 @@ def init():
 
     server.obstacle = Obstacle()
     for obstacle in server.obstacle.obstacles:
-        game_world.add_object(obstacle, 1)
+        game_world.add_object(obstacle, 3)
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 
     server.score = Score()
