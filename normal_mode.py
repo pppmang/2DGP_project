@@ -39,10 +39,10 @@ def init():
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
     # game_world.add_collision_pair('skier:obstacle2', server.skier, None)
 
-    server.obstacle = Obstacle()
-    for obstacle in server.obstacle.obstacles:
+    server.obstacle = [ Obstacle() for _ in range(40) ]
+    for obstacle in server.obstacle:
         game_world.add_object(obstacle, 3)
-        game_world.add_collision_pair('skier:obstacle', None, obstacle)
+        game_world.add_collision_pair('skier:obstacle', None, obstacle.instance)
 
     server.finish_line = FinishLine()
     game_world.add_object(server.finish_line, 1)

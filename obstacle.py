@@ -13,7 +13,7 @@ class Flag:
         self.frame_x = random.randint(0, 9) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -44,7 +44,7 @@ class Tree:
         self.frame_x = random.randint(0, 2) * self.frame_width
         self.frame_y = random.randint(0, 1) * self.frame_height
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -75,7 +75,7 @@ class Rock:
         self.frame_x = random.randint(0, 3) * self.frame_width
         self.frame_y = 0
         self.x = random.randint(50, 950)
-        self.y = random.randint(0, 50)
+        self.y = random.randint(-10000, 0)
         self.obstacle_type = obstacle_type
 
     def draw(self):
@@ -100,62 +100,24 @@ class Rock:
 
 class Obstacle:
     def __init__(self):
-        self.obstacles = []
-        self.generate_obstacle()
+        self.obstacle_type = random.choice(["flag", "tree", "rock"])
+        if self.obstacle_type == "flag":
+            self.instance = Flag(self.obstacle_type)
+        elif self.obstacle_type == "tree":
+            self.instance = Tree(self.obstacle_type)
+        elif self.obstacle_type == "rock":
+            self.instance = Rock(self.obstacle_type)
 
     def draw(self):
-        for obstacle in self.obstacles:
-            obstacle.draw()
-
-    def generate_obstacle(self):
-        new_obstacle = None
-        obstacle_type = random.choice(["flag", "tree", "rock"])
-        if obstacle_type == "flag":
-            new_obstacle = Flag("flag")
-        elif obstacle_type == "tree":
-            new_obstacle = Tree("tree")
-        elif obstacle_type == "rock":
-            new_obstacle = Rock("rock")
-
-        # 생성한 장애물을 리스트에 추가
-        self.obstacles.append(new_obstacle)
-
-        # 생성 후 장애물 개수 출력
-        print("생성 후:", len(self.obstacles))
+        self.instance.draw()
 
     def update(self):
-        # 업데이트 전 장애물 개수 출력
-        print("업데이트 전:", len(self.obstacles))
-
-        for obstacle in self.obstacles:
-            obstacle.update()
-            # 화면에서 벗어난 장애물 제거
-            if obstacle.y < -100:
-                self.obstacles.remove(obstacle)
-
-        # 업데이트 후 장애물 개수 출력
-        print("업데이트 후:", len(self.obstacles))
-
-    def check_collision(self, obstacle1, obstacle2):
-        # 두 장애물 간의 충돌 여부 확인
-        for o1 in obstacle1:
-            for o2 in obstacle2:
-                if (o1.x < o2.x + o2.frame_width and
-                        o1.x + o1.frame_width > o2.x and
-                        o1.y < o2.y + o2.frame_height and
-                        o1.y + o1.frame_height > o2.y):
-                    return True
-        return False
+        self.instance.update()
 
     def get_bb(self):
-        bounding_boxes = []
-        for obstacle in self.obstacles:
-            bounding_boxes.append(obstacle.get_bb())
-        return bounding_boxes
+        return self.instance.get_bb()
 
     def handle_collision(self, group, other):
         match group:
             case 'skier:obstacle':
-                print("Handling collision")
-                for obstacle in self.obstacles:
-                    obstacle.handle_collision('skier:obstacle', server.skier)
+                self.instance.handle_collision('skier:obstacle', server.skier)

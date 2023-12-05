@@ -32,19 +32,15 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
-# skier_turn_sound = load_wav('ski_change_dir.wav')
-# skier_ski_sound = load_wav('skiing.wav')
-# skier_turn_sound.set_volume(25)
-# skier_ski_sound.set_volume(25)
-
-
 class Idle:
     @staticmethod
     def enter(skier, e):
         skier.action = 0
         skier.speed = skier.speed
         skier.dir = 0
-        # skier.skier_ski_sound.play()
+        skier.skier_ski_sound = load_wav('skiing.wav')
+        skier.skier_ski_sound.set_volume(100)  # 볼륨 조절
+        skier.skier_ski_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -66,7 +62,9 @@ class SkiRight:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = 1
-        # skier.skier_turn_sound.play()
+        skier.skier_turn_sound = load_wav('ski_change_dir.wav')
+        skier.skier_turn_sound.set_volume(100)  # 볼륨 조절
+        skier.skier_turn_sound.play()
 
 
     @staticmethod
@@ -93,7 +91,9 @@ class SkiLeft:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = -1
-        # skier.skier_turn_sound.play()
+        skier.skier_turn_sound = load_wav('ski_change_dir.wav')
+        skier.skier_turn_sound.set_volume(100)  # 볼륨 조절
+        skier.skier_turn_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -120,6 +120,8 @@ class BlackOut:
         skier.speed = 0
         skier.frame = random.choice([0, 1])
         skier.blackout_timer = time() + 3
+        skier.skier_ski_sound.set_volume(0)
+        skier.skier_turn_sound.set_volume(0)
     @staticmethod
     def exit(skier, e):
         pass
@@ -212,19 +214,19 @@ class Skier:
                 server.game_finish.state = 'draw'
 
             case 'skier:obstacle':
-                for obstacle in server.obstacle.obstacles:
-                    obstacle_type = obstacle.obstacle_type
+                for obstacle in server.obstacle:
+                    obstacle_type = obstacle.instance.obstacle_type
                     if obstacle_type in ["tree", "rock"]:
                         self.state_machine.handle_event(('TIME_OUT', 0))
-                        game_world.remove_collision_object(obstacle)
-                        if server.infinity.life_count > 0:
+                        game_world.remove_collision_object(obstacle.instance)
+                        if hasattr(server.infinity, 'life_count') and server.infinity.life_count > 0:
                             server.infinity.remove_life_image()
-                        if server.infinity.life_count <= 0:
+                        if hasattr(server.infinity, 'life_count') and server.infinity.life_count <= 0:
                             server.infinity.life_count = 0
                             server.game_finish()
-                    elif obstacle_type in ["flag"]:
-                        server.obstacle.handle_collision('skier:obstacle', obstacle)
-                        game_world.remove_collision_object(obstacle)
+                    elif obstacle_type == "flag":
+                        obstacle.instance.handle_collision('skier:obstacle', server.skier)
+                        game_world.remove_collision_object(obstacle.instance)
 
             # case 'skier:obstacle2':
             #     for obstacle in server.obstacle.generate_obstacle().obstacles:

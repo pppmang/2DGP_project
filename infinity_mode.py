@@ -34,8 +34,8 @@ def init():
     game_world.add_object(server.skier, 2)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
-    server.obstacle = Obstacle()
-    for obstacle in server.obstacle.obstacles:
+    server.obstacle = [ Obstacle() for _ in range(100) ]
+    for obstacle in server.obstacle:
         game_world.add_object(obstacle, 3)
         game_world.add_collision_pair('skier:obstacle', None, obstacle)
 

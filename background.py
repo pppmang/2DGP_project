@@ -90,11 +90,7 @@ class InfinityMode:
         server.skier.handle_event(event)  # Skier 이벤트 처리
 
     def handle_collision(self, group, other):
-        match group:
-            case 'skier:obstacle':
-                for obstacle in server.obstacle.obstacles:
-                    obstacle_type = server.obstacle.obstacle_type
-
+        pass
 
 class ModeSelect:
     image = None
