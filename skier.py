@@ -1,6 +1,6 @@
 import random
 from time import time
-from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp
+from pico2d import load_image, SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, draw_rectangle, clamp, load_wav
 
 import game_framework
 import game_world
@@ -31,12 +31,19 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
+skier_turn_sound = load_wav('ski_change_dir.wav')
+skier_ski_sound = load_wav('skiing.wav')
+skier_turn_sound.set_volume(25)
+skier_ski_sound.set_volume(25)
+
+
 class Idle:
     @staticmethod
     def enter(skier, e):
         skier.action = 0
         skier.speed = skier.speed
         skier.dir = 0
+        skier.skier_ski_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -58,6 +65,8 @@ class SkiRight:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = 1
+        skier.skier_turn_sound.play()
+
 
     @staticmethod
     def exit(skier, e):
@@ -83,6 +92,7 @@ class SkiLeft:
         skier.action = 1
         skier.speed = skier.speed
         skier.dir = -1
+        skier.skier_turn_sound.play()
 
     @staticmethod
     def exit(skier, e):
