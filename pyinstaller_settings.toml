@@ -8,10 +8,11 @@ data_files = [
     'game_background.png',
     'game_button_UI.png',
     'game_pop_up_UI.png',
-    'GOTHICB.TTF', 'Inkfree.ttf',
+    'GOTHICB.TTF', 'Inkfree.ttf', 'impact.ttf',
     'life.png', 'mode_select_UI.png',
     'rock.png', 'skier.png', 'start_menu_background.png',
-    'tree.png'
+    'tree.png',
+    'ski_change_dir.wav', 'skiing.wav', 'startmenu_music.wav', 'background_music.mp3'
 ]
 
 # 데이타가 들어있는 폴더들을 지정하세요.
