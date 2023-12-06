@@ -41,6 +41,6 @@ class Score:
 
     def draw_final_score(self):
         final_score_text = f"{self.final_score}"  # 최종 점수를 출력
-        self.font_final.draw(410, 1150, final_score_text, (255, 255, 255))
+        self.font_final.draw(390, 1000, final_score_text, (255, 255, 255))
     def get_score(self):
         return self.score

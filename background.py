@@ -90,6 +90,7 @@ class InfinityMode:
             if obstacle_type in ["tree", "rock"]:
                 self.remove_life_image()
 
+
 class ModeSelect:
     image = None
 
@@ -129,6 +130,7 @@ class ModeSelect:
                     elif self.selected_mode == 'INFINITY':
                         return InfinityMode()
 
+
 class StartMenu:
     start_menu_sound = None
 
@@ -161,16 +163,16 @@ class GameFinish:
         self.button_UI = load_image('game_button_UI.png')
         self.x, self.y = x, y
         self.font_size_main = 55  # 기존 텍스트의 크기
-        self.font_size_score = 150  # 점수 텍스트의 크기
+        self.font_size_score = 300  # 점수 텍스트의 크기
         self.font_main = load_font('impact.TTF', self.font_size_main)
         self.font_score = load_font('impact.TTF', self.font_size_score)
         self.state = 'hide'
 
-        self.menu_buttons = [
-            {'button': 'P L A Y A G A I N', 'x': 340, 'y': 900},
-            {'button': 'H      O        M      E', 'x': 340, 'y': 730}
-        ]
-        self.selected_button = None
+        # self.menu_buttons = [
+        #     {'button': 'P L A Y A G A I N', 'x': 340, 'y': 900},
+        #     {'button': 'H      O        M      E', 'x': 340, 'y': 730}
+        # ]
+        # self.selected_button = None
 
     def update(self):
         pass
@@ -181,39 +183,46 @@ class GameFinish:
             draw_height = int(self.frame_height * 0.6)
 
             self.finish_UI.draw(self.x, self.y)
-            for button in self.menu_buttons:
-                self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, button['y'], draw_width,
-                                         draw_height)
-                self.font_main.draw(button['x'], button['y'], button['button'], (255, 255, 255))
+            # for button in self.menu_buttons:
+            #     self.button_UI.clip_draw(0, 0, self.frame_width, self.frame_height, self.x, button['y'], draw_width,
+            #                              draw_height)
+            #     self.font_main.draw(button['x'], button['y'], button['button'], (255, 255, 255))
 
             if server.mode == 'normal_mode' and collide(server.finish_line, server.skier):
                 server.score.set_final_score()  # 최종 점수를 설정
 
-            elif server.mode == 'infinity_mode':
+            elif server.mode == 'infinity_mode' and server.infinity.life_count == 0:
                 server.score.set_final_score()
 
             server.score.draw_final_score()
 
     def handle_event(self, event):
-        if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-            for button in self.menu_buttons:
-                button_x, button_y = self.x + button['x'], self.y - button['y']
+        events = get_events()
+        for event in events:
+            if event.type == SDL_QUIT:
+                game_framework.quit()
+            elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                game_framework.quit()
 
-                if button_x - 570 < event.x < button_x - 120 and button_y + 430 < event.y < button_y + 540:
-                    self.selected_button = button['button']
-
-                if self.selected_button is not None:
-                    self.state = 'hide'
-                    # 메뉴 선택 후 해당 화면으로 전환
-                    if self.selected_button == 'P L A Y A G A I N':
-                        game_framework.restart_current_mode()
-                    elif self.selected_button == 'H      O        M      E':
-                        game_framework.change_mode(title_mode)
-                        if server.mode == 'normal_mode':
-                            server.background.stop_music()  # 음악 중지 추가
-                        elif server.mode == 'infinity_mode':
-                            server.infinity.stop.music()
-                        StartMenu.start_menu_sound.set_volume(80)
+        # if event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+        #     for button in self.menu_buttons:
+        #         button_x, button_y = self.x + button['x'], self.y - button['y']
+        #
+        #         if button_x - 570 < event.x < button_x - 120 and button_y + 430 < event.y < button_y + 540:
+        #             self.selected_button = button['button']
+        #
+        #         if self.selected_button is not None:
+        #             self.state = 'hide'
+        #             # 메뉴 선택 후 해당 화면으로 전환
+        #             if self.selected_button == 'P L A Y A G A I N':
+        #                 game_framework.restart_current_mode()
+        #             elif self.selected_button == 'H      O        M      E':
+        #                 game_framework.change_mode(title_mode)
+        #                 if server.mode == 'normal_mode':
+        #                     server.background.stop_music()  # 음악 중지 추가
+        #                 elif server.mode == 'infinity_mode':
+        #                     server.infinity.stop.music()
+        #                 StartMenu.start_menu_sound.set_volume(80)
 
 
 class NormalMode:
