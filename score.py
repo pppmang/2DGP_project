@@ -11,8 +11,8 @@ class Score:
 
 
     def increase_distance(self, value):
-        if value % 5 == 0:
-            self.increase_score(30)
+        if value % 3 == 0:
+            self.increase_score(50)
 
     def increase_score(self, value):
         self.score += value

@@ -34,12 +34,12 @@ def init():
     game_world.add_object(server.infinity, 0)
 
     server.skier = Skier()
-    game_world.add_object(server.skier, 2)
+    game_world.add_object(server.skier, 1)
     game_world.add_collision_pair('skier:obstacle', server.skier, None)
 
-    obstacles = [ Obstacle() for _ in range(130) ]
+    obstacles = [ Obstacle() for _ in range(100) ]
     for obstacle in obstacles:
-        game_world.add_object(obstacle, 3)
+        game_world.add_object(obstacle, 0)
         game_world.add_collision_pair('skier:obstacle', None, obstacle.instance)
 
     server.score = Score()

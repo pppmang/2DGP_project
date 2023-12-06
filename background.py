@@ -73,9 +73,11 @@ class InfinityMode:
         if self.life_count > 0:
             self.life_count -= 1
             if self.life_count > 0:
-                removed_life = self.lives.pop()
+                removed_life = self.lives[self.life_count]
                 if removed_life in game_world.objects[3]:
                     game_world.remove_object(removed_life)
+            elif self.life_count == 0:
+                server.game_finish.state = 'draw'
 
     def handle_event(self, event):
         pass
@@ -86,12 +88,7 @@ class InfinityMode:
             obstacle_type = obstacle.obstacle_type
 
             if obstacle_type in ["tree", "rock"]:
-                if self.life_count > 0:
-                    self.remove_life_image()
-                else:
-                    # 더 이상 남은 라이프가 없으면 게임을 종료 상태로 변경
-                    server.game_finish.state = 'draw'
-
+                self.remove_life_image()
 
 class ModeSelect:
     image = None
@@ -147,7 +144,7 @@ class StartMenu:
     def draw(self):
         self.image.draw(750, 420)
         self.mode_select.draw()
-        self.font.draw(590, 610, 'The SKI', (51, 0, 153))
+        # self.font.draw(590, 610, 'The SKI', (51, 0, 153))
         self.font.draw(600, 600, 'The SKI', (153, 204, 255))
         self.font.draw(610, 590, 'The SKI', (255, 255, 255))
 

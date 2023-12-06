@@ -126,7 +126,7 @@ class BlackOut:
         skier.action = 3
         skier.speed = 0
         skier.frame = random.choice([0, 1])
-        skier.blackout_timer = time() + 4
+        skier.blackout_timer = time() + 3
         skier.skier_ski_sound.set_volume(0)
 
     @staticmethod
@@ -136,7 +136,7 @@ class BlackOut:
             skier.skier_ski_sound.set_volume(100)
     @staticmethod
     def do(skier):
-        if time() > skier.blackout_timer - 1:
+        if time() > skier.blackout_timer + 1:
             skier.state_machine.handle_event(('TIME_OUT', None))
     @staticmethod
     def draw(skier):
@@ -235,7 +235,6 @@ class Skier:
                         server.infinity.remove_life_image()
 
                     elif hasattr(server.infinity, 'life_count') and server.infinity.life_count == 0:
-                        server.infinity.life_count = 0
                         server.game_finish.state = 'draw'
 
                 elif obstacle_type == "flag":

@@ -65,7 +65,7 @@ class Tree:
         self.y += server.skier.speed * game_framework.frame_time
 
     def get_bb(self):
-        return self.x - 45, self.y - 55, self.x + 45, self.y + 55
+        return self.x - 40, self.y - 45, self.x + 40, self.y + 35
 
     def handle_collision(self, group, other):
         match group:
@@ -99,7 +99,7 @@ class Rock:
         self.y += server.skier.speed * game_framework.frame_time
 
     def get_bb(self):
-        return self.x - 50, self.y - 25, self.x + 50, self.y + 25
+        return self.x - 40, self.y - 20, self.x + 40, self.y + 20
 
     def handle_collision(self, group, other):
         match group:
