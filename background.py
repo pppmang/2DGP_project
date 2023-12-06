@@ -209,7 +209,10 @@ class GameFinish:
                         game_framework.restart_current_mode()
                     elif self.selected_button == 'H      O        M      E':
                         game_framework.change_mode(title_mode)
-                        server.background.stop_music()  # 음악 중지 추가
+                        if server.mode == 'normal_mode':
+                            server.background.stop_music()  # 음악 중지 추가
+                        elif server.mode == 'infinity_mode':
+                            server.infinity.stop.music()
                         StartMenu.start_menu_sound.set_volume(80)
 
 

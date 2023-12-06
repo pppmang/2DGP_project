@@ -31,23 +31,14 @@ def time_out(e):
 
 
 class Idle:
-    skier_ski_sound = None  # 클래스 변수로 소리를 저장할 변수 추가
-
-    @classmethod
-    def load_sound(cls):
-        if cls.skier_ski_sound is None:
-            cls.skier_ski_sound = load_wav('skiing.wav')
-            cls.skier_ski_sound.set_volume(100)
     @staticmethod
     def enter(skier, e):
         skier.action = 0
         skier.speed = skier.speed
         skier.dir = 0
-
-        if not server.game_finish:  # game_finish 상태가 아닌 경우에만 소리 재생
-            Idle.load_sound()  # 소리 로드
-            skier.skier_ski_sound = Idle.skier_ski_sound
-            skier.skier_ski_sound.repeat_play()
+        skier.skier_ski_sound = load_wav('skiing.wav')
+        skier.skier_ski_sound.set_volume(50)
+        skier.skier_ski_sound.repeat_play()
 
     @staticmethod
     def exit(skier, e):
@@ -70,7 +61,7 @@ class SkiRight:
         skier.speed = skier.speed
         skier.dir = 1
         skier.skier_turn_sound = load_wav('ski_change_dir.wav')
-        skier.skier_turn_sound.set_volume(100)  # 볼륨 조절
+        skier.skier_turn_sound.set_volume(50)  # 볼륨 조절
         skier.skier_turn_sound.play()
 
 
@@ -99,7 +90,7 @@ class SkiLeft:
         skier.speed = skier.speed
         skier.dir = -1
         skier.skier_turn_sound = load_wav('ski_change_dir.wav')
-        skier.skier_turn_sound.set_volume(100)  # 볼륨 조절
+        skier.skier_turn_sound.set_volume(50)  # 볼륨 조절
         skier.skier_turn_sound.play()
 
     @staticmethod
@@ -127,7 +118,9 @@ class BlackOut:
         skier.speed = 0
         skier.frame = random.choice([0, 1])
         skier.blackout_timer = time() + 3
+        skier.skier_ski_sound = load_wav('skiing.wav')
         skier.skier_ski_sound.set_volume(0)
+        skier.skier_ski_sound.play()
 
     @staticmethod
     def exit(skier, e):
@@ -187,14 +180,14 @@ class Skier:
         self.image = load_image('skier.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.acceleration_time = time() + 10  # 초기 가속 시간 설정
+        self.acceleration_time = time() + 5  # 초기 가속 시간 설정
 
     def update(self):
         self.state_machine.update()
 
         # 10초마다 속도를 증가
         if time() > self.acceleration_time:
-            self.acceleration_time = time() + 10
+            self.acceleration_time = time() + 5
             self.accelerate()
 
     def accelerate(self):
